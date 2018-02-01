@@ -1,12 +1,14 @@
 ## API Design
 
-> Draft v1.0. 
+> Draft v2.0. 
+>
+> (Changed user api based on QingdaoOJ designs.)
 >
 > Would be transferred to webpages with django-rest-framework after revisions.
 
 ### User
 
-* #### ``POST``  /user/{id} 
+* #### ``POST``  /login 
 
   ##### Explanation:
 
@@ -16,18 +18,18 @@
 
   ```python
   {
-      "userName":"WWWlab",
-      "password":"12345"
+      "password":"12345",
+      "username":"WWWlab"
   }
   ```
 
-* #### ``GET`` /user/{id}
+* #### ``GET`` /logout
 
   ##### Explanation: 
 
   ​	User log out
 
-* #### ``POST`` /user
+* #### ``POST`` /register
 
   ##### Explanation:
 
@@ -37,11 +39,23 @@
 
   ```python
   {
-      "userName":"WWWlab",
-      "password":"12345",
-      "eMail":"abc@seu.edu.cn"
+      "email":"abc@seu.edu.cn",
+      "captcha":"abcd",
+      "username":"WWWlab",
+      "password":"12345"
   }
   ```
+
+* #### ``GET`` /captcha
+
+* #### ``GET`` /profile
+
+* #### ``PUT`` /profile
+
+* #### ....
+
+
+> SEE OnlineJudgeFE/src/pages/oj/api.js & OnlineJudgeFE/src/pages/admin/api.js & 
 
 
 ### Game
