@@ -1,25 +1,14 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField  # NOQA
 
 # from django.contrib.auth.models import User
 # Create your models here.
 
-class AdminType(object):
-    REGULAR_USER = "Regular User"
-    ADMIN = "Admin"
-    SUPER_ADMIN = "Super Admin"
-
-
-class User(models.Model):
-    username = models.CharField(max_length=32, unique=True)
-    password = models.CharField(max_length=32)
-    email = models.EmailField(max_length=64, null=True)
-    create_time = models.DateTimeField(auto_now_add=True, null=True)
-    admin_type = models.CharField(max_length=32, default=AdminType.REGULAR_USER)
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete = models.CASCADE)
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
     game_status = JSONField(default=dict)
     # game_status examples:
     # {
@@ -47,3 +36,38 @@ class UserProfile(models.Model):
     github = models.CharField(max_length=64, blank=True, null=True)
     school = models.CharField(max_length=64, blank=True, null=True)
     major = models.CharField(max_length=64, blank=True, null=True)
+    submission_number = models.IntegerField(default = 0)
+    win_number = models.IntegerField(default = 0)
+    def add_win_problem_number(self):
+        self.win_number = models.F("win_number") + 1
+        self.save()
+    def add_submission_number(self):
+        self.submission_number = models.F("submission_number") + 1
+        self.save()
+
+class GameType(models.Model):
+    game_name = models.CharField(max_length = 32)
+    game_description = models.TextField()
+
+class Game(models.Model):
+    STATUS = (
+        ('0','OnGoing'),
+        ('1','Finished'),
+    )
+    game_type = models.ForeignKey(GameType,on_delete = models.CASCADE)
+    status = models.CharField(max_length=1, choices = STATUS)
+    members = models.ManyToManyField(User, through='JoinGame')
+    # record = models.ForeignKey(Steps,on_delete = models.CASCADE)
+
+class JoinGame(models.Model):
+    players = models.ForeignKey(User,on_delete = models.CASCADE)
+    group = models.ForeignKey(Game, on_delete=models.CASCADE)
+    date_joined = models.DateTimeField(auto_now_add = True)
+
+class Steps(models.Model):
+    players = models.ForeignKey(User,on_delete = models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    created_time = models.DateTimeField(auto_now_add = True)
+    move_code = models.IntegerField(default = 0)
+    
+    

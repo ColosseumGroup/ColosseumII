@@ -16,30 +16,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.views.generic import TemplateView
+from django.contrib.auth import login,authenticate
+from django.contrib import auth
+from django.http import HttpResponse
 import backend.urls
-from backend.serializers import UserSerializer, UserProfileSerializer
+from backend.serializers import UserLoginSerializer, UserSerializer
 from backend.models import User,UserProfile
 from rest_framework import routers, serializers, viewsets,permissions
 
 
-# ViewSets define the view behavior.
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-class UserSerializerViewSet(viewsets.ModelViewSet):
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileSerializer    
-
-# Routers provide an easy way of automatically determining the URL conf.
-router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
-router.register(r'userprofile', UserSerializerViewSet)
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/',include(router.urls)),
+    path('api/',include(backend.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('',TemplateView.as_view(template_name = "index.html")),
 ]
