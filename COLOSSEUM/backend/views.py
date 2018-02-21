@@ -35,6 +35,15 @@ def LogoutAPI(req):
 @csrf_exempt
 def RegisterAPI(req):
     if req.method == 'POST':
+        username = req.POST.get("username")
+        password = req.POST.get("password")
+        email = req.POST.get("email")
+        first_name = req.POST.get("first_name")
+        last_name = req.POST.get("last_name")
+        if User.objects.all().filter(username = username) is None:
+            return HttpResponse(status = 403)
+        NewUser = User(username = username, password = password, email = email, first_name = first_name, last_name = last_name)
+        NewUser.save()
         return HttpResponse(status = 200)
 
 @csrf_exempt

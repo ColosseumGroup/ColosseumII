@@ -7,7 +7,7 @@
 
 - [x] ``POST``  /login
 - [x] ``GET`` /logout
-- [ ] ``POST`` /register
+- [x] ``POST`` /register
 
 * #### ``POST``  /login 
 
