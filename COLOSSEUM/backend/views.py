@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from backend.models import User,UserProfile
+from backend.models import User,UserProfile,Game,GameType
 from backend.serializers import UserSerializer,UserProfileSerializer
 
 @csrf_exempt    
@@ -31,3 +31,32 @@ def LogoutAPI(req):
     if req.method == 'GET':
         logout(req)
         return HttpResponse("All right, see ya(｡･ω･)ﾉ", status = 200)
+
+@csrf_exempt
+def RegisterAPI(req):
+    if req.method == 'POST':
+        return HttpResponse(status = 200)
+
+@csrf_exempt
+def CreateOthelloGameAPI(req):
+    # if is_valid():
+    if req.method == 'POST':    
+        return HttpResponse(status = 200)
+
+
+@csrf_exempt
+def GameInfoAPI(req,GameID):
+    # game = Game.objects.get(pk = GameID)
+    if req.method == 'POST':
+        return HttpResponse(status = 200)
+    elif req.method == 'GET':
+        return HttpResponse(status = 200)
+    
+
+@csrf_exempt
+def GameStepsAPI(req,GameID):
+    # game = Game.objects.get(pk = GameID)
+    if req.method == 'POST':
+        return HttpResponse(status = 200)
+    elif req.method == 'GET':
+        return HttpResponse(status = 200)

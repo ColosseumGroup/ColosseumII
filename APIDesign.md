@@ -1,16 +1,17 @@
 ## API Design
 
-> Draft v2.0. 
->
-> (Changed user api based on QingdaoOJ designs.)
->
+> Draft v3.0.   
 > Would be transferred to webpages with django-rest-framework after revisions.
 
 ### User
 
+- [x] ``POST``  /login
+- [x] ``GET`` /logout
+- [ ] ``POST`` /register
+
 * #### ``POST``  /login 
 
-  ##### Explanation:
+  ##### Explanation: 
 
   ​	User login.
 
@@ -22,6 +23,7 @@
       "username":"WWWlab"
   }
   ```
+
 
 * #### ``GET`` /logout
 
@@ -40,43 +42,46 @@
   ```python
   {
       "email":"abc@seu.edu.cn",
-      "captcha":"abcd",
+      "first_name":"abc",
+      "last_name":"def",
       "username":"WWWlab",
       "password":"12345"
   }
   ```
+  ​
 
-* #### ``GET`` /captcha
-
-* #### ``GET`` /profile
-
-* #### ``PUT`` /profile
-
-* #### ....
-
-
-> SEE OnlineJudgeFE/src/pages/oj/api.js & OnlineJudgeFE/src/pages/admin/api.js & 
 
 
 ### Game
 
-* #### ``POST`` /game/{gametype}
+- [ ] ``GET`` /game/Othello/
+- [ ] ``POST`` /game/{GameID}/
+- [ ] ``GET`` /game/{GameID}/
+- [ ] ``POST`` /game/{GameID}/record/
+- [ ] ``GET`` /game/{GameID}/record/
+
+* #### ``GET`` /game/Othello
 
   ##### Explanation:
 
-  ​	Start a new game of type {gametype}.
+  ​	Create a new game of Othello, return the new game ID to user
 
-  ##### Example:
 
-  ```python
-  {
-      "opponent1ID":"oppo1",
-      "opponent2ID":"oppo2",
-      "opponent3ID":"oppo3"
-  }
-  ```
+* #### ``POST`` /game/{GameID}
 
-* #### ``POST`` /game/{gametype}/{gameID}
+  ##### Explanation:
+
+  ​	Join a new game.
+
+* #### ``GET`` /game/{GameID}
+
+  ##### Explanation:
+
+  ​	Get the status of game with id = {GameID}
+
+  ​	Return the game record in JSON if the game is over.
+
+* #### ``POST`` /game/{GameID}/record/
 
   ##### Explanation:
 
@@ -84,7 +89,7 @@
 
   ​	Use operation ID to determine what kind of operation is being performed.
 
-  ​	For instance, ID=0 could idicate
+  ​	For default, ID = 0.
 
   ##### Example:
 
@@ -102,23 +107,9 @@
   }
   ```
 
-* #### ``GET`` /game/{gametype}/{gameID}
+* #### ``GET`` /game/{GameID}/record/
 
   ##### Explanation:
 
   ​	Return the whole record of the game with ID {gameID} till the current time.
 
-
-### General View
-
-* #### ``GET`` /game
-
-  ##### Explanation:
-
-  ​	Return records for all games every type.
-
-* #### ``GET`` /game/{gametype}
-
-  ##### Explanation:
-
-  ​	Return records for all games of type {gametype}

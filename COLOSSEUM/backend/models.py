@@ -3,12 +3,30 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField  # NOQA
 
-# from django.contrib.auth.models import User
-# Create your models here.
 
+class GameType(models.Model):
+    game_name = models.CharField(max_length = 32)
+    game_description = models.TextField()
+    def __str__(self):
+        return self.game_name
+
+class Game(models.Model):
+    STATUS = (
+        ('0','Pending'),
+        ('1','OnGoing'),
+        ('2','Finished'),
+        ('3','ErrrorUnfinished'),
+    )
+    game_type = models.ForeignKey(GameType,on_delete = models.CASCADE)
+    status = models.CharField(max_length=1, choices = STATUS, default = '0')
+    created_time = models.DateTimeField(auto_now_add = True)
+    class Meta:
+        ordering = ['created_time']
+    
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
+    games = models.ManyToManyField(Game)
     game_status = JSONField(default=dict)
     # game_status examples:
     # {
@@ -45,29 +63,14 @@ class UserProfile(models.Model):
         self.submission_number = models.F("submission_number") + 1
         self.save()
 
-class GameType(models.Model):
-    game_name = models.CharField(max_length = 32)
-    game_description = models.TextField()
-
-class Game(models.Model):
-    STATUS = (
-        ('0','OnGoing'),
-        ('1','Finished'),
-    )
-    game_type = models.ForeignKey(GameType,on_delete = models.CASCADE)
-    status = models.CharField(max_length=1, choices = STATUS)
-    members = models.ManyToManyField(User, through='JoinGame')
-    # record = models.ForeignKey(Steps,on_delete = models.CASCADE)
-
-class JoinGame(models.Model):
-    players = models.ForeignKey(User,on_delete = models.CASCADE)
-    group = models.ForeignKey(Game, on_delete=models.CASCADE)
-    date_joined = models.DateTimeField(auto_now_add = True)
+class Result(models.Model):
+    belong_to_game_id = models.IntegerField(default = 0)
+    player = models.ForeignKey(User,on_delete = models.CASCADE)
+    scores = models.IntegerField(default = 0)
 
 class Steps(models.Model):
-    players = models.ForeignKey(User,on_delete = models.CASCADE)
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    belong_to_game_id = models.IntegerField(default = 0)    
+    player = models.ForeignKey(User,on_delete = models.CASCADE)
     created_time = models.DateTimeField(auto_now_add = True)
-    move_code = models.IntegerField(default = 0)
-    
+    step_taken = models.IntegerField(default = 0)
     
