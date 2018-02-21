@@ -49,9 +49,11 @@ def RegisterAPI(req):
 @csrf_exempt
 def CreateOthelloGameAPI(req):
     # if is_valid():
-    if req.method == 'POST':    
-        return HttpResponse(status = 200)
-
+    if req.method == 'POST':
+        game_type = GameType.objects.get(pk = 1)
+        new_game = Game(game_type = game_type)
+        new_game.save()
+        return HttpResponse(new_game.id,status = 200)
 
 @csrf_exempt
 def GameInfoAPI(req,GameID):
