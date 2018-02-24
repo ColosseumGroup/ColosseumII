@@ -20,15 +20,13 @@ from django.contrib.auth import login,authenticate
 from django.contrib import auth
 from django.http import HttpResponse
 import backend.urls
-# from backend.serializers import UserLoginSerializer, UserSerializer
-# from backend.models import User,UserProfile
 from rest_framework import routers, serializers, viewsets,permissions
 
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('api/',include(backend.urls)),
+    path('api/',include(backend.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('',TemplateView.as_view(template_name = "index.html")),
 ]

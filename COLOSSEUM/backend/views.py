@@ -5,8 +5,8 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from backend.models import User,UserProfile,Game,GameType
-from backend.serializers import UserSerializer,UserProfileSerializer
+from backend.models import User,Game,GameType
+from backend.serializers import UserSerializer
 
 @csrf_exempt    
 def LoginAPI(req):
@@ -44,8 +44,8 @@ def RegisterAPI(req):
             return HttpResponse(status = 403)
         NewUser = User(username = username, password = password, email = email, first_name = first_name, last_name = last_name)
         NewUser.save()
-        user_profile = UserProfile(user = NewUser)
-        user_profile.save()
+        # user_profile = UserProfile(user = NewUser)
+        # user_profile.save()
         return HttpResponse(status = 200)
 
 @csrf_exempt
@@ -61,7 +61,7 @@ def CreateOthelloGameAPI(req):
 def GameInfoAPI(req,GameID):
     # game = Game.objects.get(pk = GameID)
     if req.method == 'POST':
-        usr = req.user
+        # usr = req.user
 
         return HttpResponse(status = 200)
     elif req.method == 'GET':

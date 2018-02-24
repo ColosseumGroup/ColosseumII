@@ -14,6 +14,13 @@ class GameType(models.Model):
     def __str__(self):
         return self.game_name
 
+class Result(models.Model):
+    user_1_score = models.IntegerField(default = 0)
+    user_2_score = models.IntegerField(default = 0)
+    user_3_score = models.IntegerField(default = 0)
+    user_4_score = models.IntegerField(default = 0)
+
+
 class Game(models.Model):
     STATUS = (
         ('0','Pending'),
@@ -25,6 +32,7 @@ class Game(models.Model):
     status = models.CharField(max_length=1, choices = STATUS, default = '0')
     created_time = models.DateTimeField(auto_now_add = True)
     players = models.ManyToManyField(User, through='JoinGame')
+    result = models.ForeignKey(Result, on_delete = models.CASCADE)
     class Meta:
         ordering = ['created_time']
     
@@ -34,29 +42,12 @@ class JoinGame(models.Model):
     game = models.ForeignKey(Game, on_delete = models.CASCADE)
     join_time = models.DateTimeField(auto_now_add = True)
 
+class Decision(models.Model):
+    game = models.ForeignKey(Game, on_delete =models.CASCADE)
+    created_time = models.DateTimeField(auto_now_add = True)
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    decision_code = models.IntegerField(default = 0)
 
-# """
-# default dicts
-# """
-
-# game_users_default = {
-#     "num_of_current_members":0,
-#     "user_id":{ },
-# }
-
-# userprofile_game_status_default = {
-#     "reversi":{},
-#     "poker":{}
-# }
-
-# userprofile_game_status_default_reversi = {
-#     "opponent_id":"12345",
-#     "statuss": 0,
-# }
-
-# """
-# models
-# """
 
 # # class UserProfile(models.Model):
 # #     user = models.ForeignKey(User, on_delete = models.CASCADE)
@@ -112,27 +103,3 @@ class JoinGame(models.Model):
 #     # }    
 
 
-class Decision(models.Model):
-    game = models.ForeignKey(Game, on_delete =models.CASCADE)
-    created_time = models.DateTimeField(auto_now_add = True)
-    user = models.ForeignKey(User, on_delete = models.CASCADE)
-
-
-# class Record(models.Model):
-#     belong_to_game_id = models.IntegerField(default = 0)    
-#     created_time = models.DateTimeField(auto_now_add = True)
-#     record = JSONField(default = dict)
-#     # record examples:
-#     # {
-# #         "1": {
-# #             "user_id":"12345",
-# #             "operation_type": "0",
-# #             "create_time": "1000"
-# #         },
-# #         "2": {
-# #             "user_id":"78910",
-# #             "operation_type": "0",
-# #             "create_time": "1034"
-# #         },
-#     # }    
-    
