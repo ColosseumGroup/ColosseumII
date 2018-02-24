@@ -44,6 +44,8 @@ def RegisterAPI(req):
             return HttpResponse(status = 403)
         NewUser = User(username = username, password = password, email = email, first_name = first_name, last_name = last_name)
         NewUser.save()
+        user_profile = UserProfile(user = NewUser)
+        user_profile.save()
         return HttpResponse(status = 200)
 
 @csrf_exempt
@@ -59,6 +61,8 @@ def CreateOthelloGameAPI(req):
 def GameInfoAPI(req,GameID):
     # game = Game.objects.get(pk = GameID)
     if req.method == 'POST':
+        usr = req.user
+
         return HttpResponse(status = 200)
     elif req.method == 'GET':
         return HttpResponse(status = 200)

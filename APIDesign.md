@@ -54,7 +54,7 @@
 
 ### Game
 
-- [ ] ``GET`` /game/Othello/
+- [x] ``GET`` /game/Othello/
 - [ ] ``POST`` /game/{GameID}/
 - [ ] ``GET`` /game/{GameID}/
 - [ ] ``POST`` /game/{GameID}/record/
