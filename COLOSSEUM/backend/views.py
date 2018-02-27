@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from backend.models import User,Game,GameType
-from backend.serializers import UserSerializer
+from backend.serializers import UserSerializer, DecisionSerializer
 
 @csrf_exempt    
 def LoginAPI(req):
@@ -61,17 +61,29 @@ def CreateOthelloGameAPI(req):
 def GameInfoAPI(req,GameID):
     # game = Game.objects.get(pk = GameID)
     if req.method == 'POST':
-        # usr = req.user
-
-        return HttpResponse(status = 200)
+        usr = req.user
+        game = Game.objects.get(pk = GameID)
+        if game.status != '0':
+            join_game = JoinGame(player = usr, game = game)
+            return HttpResponse(status = 200)  
+        return HttpResponse(status = 403)
     elif req.method == 'GET':
-        return HttpResponse(status = 200)
+        game = Game.objects.get(pk = GameID)
+        return HttpResponse(game.status,status = 200)
     
 
 @csrf_exempt
 def GameStepsAPI(req,GameID):
-    # game = Game.objects.get(pk = GameID)
+    game = Game.objects.get(pk = GameID)
     if req.method == 'POST':
-        return HttpResponse(status = 200)
+        usr = req.User
+        decision_code = req.POST['decision_code']
+        new_decision = Decision(game = game, user = usr, decision_code = decision_code)
+        if new_decision.IsValid():
+            new_decision.save()
+            return HttpResponse(status = 200) 
+        return HttpResponse("operation not valid",status = 400)
     elif req.method == 'GET':
-        return HttpResponse(status = 200)
+        record = Decision.objects.all().filter(game.objects.get(pk  = GameID))
+        serializer = DecisionSerializer(record, many = True)
+        return JsonResponse(serializer.data, safe = False)

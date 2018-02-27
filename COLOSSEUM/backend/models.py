@@ -35,7 +35,6 @@ class Game(models.Model):
     result = models.ForeignKey(Result, on_delete = models.CASCADE)
     class Meta:
         ordering = ['created_time']
-    
 
 class JoinGame(models.Model):
     player = models.ForeignKey(User,on_delete = models.CASCADE)
@@ -47,7 +46,8 @@ class Decision(models.Model):
     created_time = models.DateTimeField(auto_now_add = True)
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     decision_code = models.IntegerField(default = 0)
-
+    def IsValid(self):
+        pass
 
 # # class UserProfile(models.Model):
 # #     user = models.ForeignKey(User, on_delete = models.CASCADE)

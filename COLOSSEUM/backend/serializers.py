@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from backend.models import User,Game# ,UserProfile,Result,Steps
+from backend.models import User,Game,Decision# ,UserProfile,Result,Steps
 from django import forms
 
 class UserSerializer(serializers.ModelSerializer):
@@ -26,9 +26,9 @@ class GameSerializer(serializers.ModelSerializer):
         model = Game
         fields = ('game_type', 'status','created_time')
 
-# class StepsSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Steps
-#         fields = ('belong_to_game_id', 'player', 'created_time', 'step_taken')
+class DecisionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Decision
+        fields = ('game', 'user', 'created_time', 'decision_code')
  
         

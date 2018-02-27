@@ -55,10 +55,10 @@
 ### Game
 
 - [x] ``GET`` /game/Othello/
-- [ ] ``POST`` /game/{GameID}/
-- [ ] ``GET`` /game/{GameID}/
-- [ ] ``POST`` /game/{GameID}/record/
-- [ ] ``GET`` /game/{GameID}/record/
+- [x] ``POST`` /game/{GameID}/
+- [x] ``GET`` /game/{GameID}/
+- [x] ``POST`` /game/{GameID}/record/
+- [x] ``GET`` /game/{GameID}/record/
 
 * #### ``GET`` /game/Othello
 
@@ -91,25 +91,9 @@
 
   ​	For default, ID = 0.
 
-  ##### Example:
-
-  ```python
-  {
-      "operationID":0,
-      "operation":
-      {
-          "step0":
-          {
-              "posX":1,
-     			"posY":10
-          }
-      }
-  }
-  ```
-
 * #### ``GET`` /game/{GameID}/record/
 
   ##### Explanation:
 
-  ​	Return the whole record of the game with ID {gameID} till the current time.
+  ​	Return the whole record of the game with ID {gameID} till the current time.		
 
