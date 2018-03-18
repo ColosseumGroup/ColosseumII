@@ -14,7 +14,7 @@ function resolve (dir) {
 function getEntries () {
   const base = {
     'oj': ['./src/pages/oj/index.js'],
-    'admin': ['./src/pages/admin/index.js']
+    // 'admin': ['./src/pages/admin/index.js']
   }
   if (process.env.USE_SENTRY === '1') {
     Object.keys(base).forEach(entry => {

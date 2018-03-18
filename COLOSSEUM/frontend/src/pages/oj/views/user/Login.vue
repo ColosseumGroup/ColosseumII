@@ -11,11 +11,11 @@
         <Icon type="ios-locked-outline" slot="prepend"></Icon>
         </Input>
       </FormItem>
-      <FormItem prop="tfa_code" v-if="tfaRequired">
+      <!-- <FormItem prop="tfa_code" v-if="tfaRequired">
         <Input v-model="formLogin.tfa_code" placeholder="Code from your TFA app">
         <Icon type="ios-lightbulb-outline" slot="prepend"></Icon>
         </Input>
-      </FormItem>
+      </FormItem> -->
     </Form>
     <div class="footer">
       <Button
@@ -25,7 +25,8 @@
         :loading="btnLoginLoading">
         Login
       </Button>
-      <a v-if="website.allow_register" @click.stop="handleBtnClick('register')">No account? Register now!</a>
+      <!-- <a v-if="website.allow_register" @click.stop="handleBtnClick('register')">No account? Register now!</a> -->
+      <a @click.stop="handleBtnClick('register')">No account? Register now!</a>
       <a @click.stop="goResetPassword" style="float: right">Forget Password</a>
     </div>
   </div>
@@ -39,14 +40,14 @@
   export default {
     mixins: [FormMixin],
     data () {
-      const CheckRequiredTFA = (rule, value, callback) => {
-        if (value !== '') {
-          api.tfaRequiredCheck(value).then(res => {
-            this.tfaRequired = res.data.data.result
-          })
-        }
-        callback()
-      }
+      // const CheckRequiredTFA = (rule, value, callback) => {
+      //   if (value !== '') {
+      //     api.tfaRequiredCheck(value).then(res => {
+      //       this.tfaRequired = res.data.data.result
+      //     })
+      //   }
+      //   callback()
+      // }
 
       return {
         tfaRequired: false,
@@ -54,15 +55,15 @@
         formLogin: {
           username: '',
           password: '',
-          tfa_code: ''
+          // tfa_code: ''
         },
         ruleLogin: {
           username: [
             {required: true, trigger: 'blur'},
-            {validator: CheckRequiredTFA, trigger: 'blur'}
+            // {validator: CheckRequiredTFA, trigger: 'blur'}
           ],
           password: [
-            {required: true, trigger: 'change', min: 6, max: 20}
+            {required: true, trigger: 'change', min: 0, max: 30}
           ]
         }
       }

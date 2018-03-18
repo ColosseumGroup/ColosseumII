@@ -21,7 +21,7 @@
         <Icon type="ios-locked-outline" slot="prepend"></Icon>
         </Input>
       </FormItem>
-      <FormItem prop="captcha" style="margin-bottom:10px">
+      <!-- <FormItem prop="captcha" style="margin-bottom:10px">
         <div class="oj-captcha">
           <div class="oj-captcha-code">
             <Input v-model="formRegister.captcha" placeholder="Captcha" size="large" @on-enter="handleRegister">
@@ -34,7 +34,7 @@
             </Tooltip>
           </div>
         </div>
-      </FormItem>
+      </FormItem> -->
     </Form>
     <div class="footer">
       <Button
@@ -104,8 +104,8 @@
           username: '',
           password: '',
           passwordAgain: '',
-          email: '',
-          captcha: ''
+          email: ''
+          // captcha: ''
         },
         ruleRegister: {
           username: [
@@ -122,10 +122,10 @@
           ],
           passwordAgain: [
             {required: true, validator: CheckAgainPassword, trigger: 'change'}
-          ],
-          captcha: [
-            {required: true, trigger: 'blur', min: 1, max: 10}
           ]
+          // captcha: [
+          //   {required: true, trigger: 'blur', min: 1, max: 10}
+          // ]
         }
       }
     },

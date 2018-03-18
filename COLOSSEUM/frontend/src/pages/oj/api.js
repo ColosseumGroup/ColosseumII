@@ -5,8 +5,8 @@ import axios from 'axios'
 
 Vue.prototype.$http = axios
 axios.defaults.baseURL = '/api'
-axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-axios.defaults.xsrfCookieName = 'csrftoken'
+// axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+// axios.defaults.xsrfCookieName = 'csrftoken'
 
 export default {
   getWebsiteConf (params) {
@@ -18,9 +18,9 @@ export default {
     // return ajax('announcement', 'get')
   },
   login (data) {
-    // return ajax('login', 'post', {
-    //   data
-    // })
+    return ajax('login', 'post', {
+      data
+    })
   },
   checkUsernameOrEmail (username, email) {
     // return ajax('check_username_or_email', 'post', {
@@ -32,9 +32,9 @@ export default {
   },
   // 注册
   register (data) {
-    // return ajax('register', 'post', {
-    //   data
-    // })
+    return ajax('register', 'post', {
+      data
+    })
   },
   logout () {
     // return ajax('logout', 'get')

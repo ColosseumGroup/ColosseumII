@@ -49,7 +49,8 @@
                   shape="circle"
                   @click="handleBtnClick('login')">Login
           </Button>
-          <Button v-if="website.allow_register"
+          <!-- <Button v-if="website.allow_register" -->
+          <Button
                   type="ghost"
                   shape="circle"
                   @click="handleBtnClick('register')"

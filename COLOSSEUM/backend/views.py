@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required,user_passes_test
 
 from rest_framework.renderers import JSONRenderer
