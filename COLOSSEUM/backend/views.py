@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate,login
 from django.contrib.auth.decorators import login_required,user_passes_test
 
 from rest_framework.renderers import JSONRenderer
@@ -15,11 +15,13 @@ def LoginAPI(req):
     if req.method == 'POST':
         username = req.POST.get("username")
         password = req.POST.get("password")
-        # print(username, password)
+        print(username, password)
         usr = authenticate(req,username = username, password = password)
         # serializer = UserSerializer(data = request)
+        print(usr)
         if usr is not None:
-            login(req, usr)
+            a = login(req, usr)
+            print(a)
             return HttpResponse(status = 200)
         else:
             return HttpResponse("You there! You're the bad guy!(>_<)", status = 400)
@@ -35,6 +37,8 @@ def LogoutAPI(req):
 
 @csrf_exempt
 def RegisterAPI(req):
+    if req.method == 'GET':
+        return HttpResponse(status = 201) # trial
     if req.method == 'POST':
         username = req.POST.get("username")
         password = req.POST.get("password")
@@ -43,7 +47,7 @@ def RegisterAPI(req):
         last_name = req.POST.get("last_name")
         if User.objects.all().filter(username = username) is None:
             return HttpResponse(status = 403)
-        NewUser = User(username = username, password = password, email = email, first_name = first_name, last_name = last_name)
+        NewUser = User.objects.create_user(username = username, password = password, email = email, first_name = first_name, last_name = last_name)
         NewUser.save()
         # user_profile = UserProfile(user = NewUser)
         # user_profile.save()

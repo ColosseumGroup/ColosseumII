@@ -285,25 +285,27 @@ function ajax (url, method, options) {
       method,
       params,
       data
+    // }).then(res => {
+    //   // API正常返回(status=20x), 是否错误通过有无error判断
+    //   if (res.data.error !== null) {
+    //     Vue.prototype.$error(res.data.data)
+    //     reject(res)
+    //     // 若后端返回为登录，则为session失效，应退出当前登录用户
+    //     if (res.data.data.startsWith('Please login')) {
+    //       store.dispatch('changeModalStatus', {'mode': 'login', 'visible': true})
+    //     }
+    //   } else {
+    //     resolve(res)
+    //     // if (method !== 'get') {
+    //     //   Vue.prototype.$success('Succeeded')
+    //     // }
+    //   }
+    // }, res => {
+    //   // API请求异常，一般为Server error 或 network error
+    //   reject(res)
+    //   Vue.prototype.$error(res.data.data)
     }).then(res => {
-      // API正常返回(status=20x), 是否错误通过有无error判断
-      if (res.data.error !== null) {
-        Vue.prototype.$error(res.data.data)
-        reject(res)
-        // 若后端返回为登录，则为session失效，应退出当前登录用户
-        if (res.data.data.startsWith('Please login')) {
-          store.dispatch('changeModalStatus', {'mode': 'login', 'visible': true})
-        }
-      } else {
-        resolve(res)
-        // if (method !== 'get') {
-        //   Vue.prototype.$success('Succeeded')
-        // }
-      }
-    }, res => {
-      // API请求异常，一般为Server error 或 network error
-      reject(res)
-      Vue.prototype.$error(res.data.data)
+      console.log("sent!")
     })
   })
 }
