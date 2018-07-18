@@ -1,14 +1,14 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
-
-# class Game(models.Model):
-#     trial = models.CharField(max_length = 50, default = "default")
-#     def __str__(self):
-#         return self.trial
-    
+# User TEST Case:
+#   username = "trial"
+#   password = "trial"
 
 class GameType(models.Model):
+    # TEST CASE: <GameType: game_test_1>
+    #  game_name = "game_test_1", 
+    #  game_description = "game_test_1_description"
     game_name = models.CharField(max_length = 32)
     game_description = models.TextField()
     def __str__(self):
@@ -26,13 +26,13 @@ class Game(models.Model):
         ('0','Pending'),
         ('1','OnGoing'),
         ('2','Finished'),
-        ('3','ErrrorUnfinished'),
+        ('3','Errror'),
     )
     game_type = models.ForeignKey(GameType,on_delete = models.CASCADE)
     status = models.CharField(max_length=1, choices = STATUS, default = '0')
     created_time = models.DateTimeField(auto_now_add = True)
     players = models.ManyToManyField(User, through='JoinGame')
-    result = models.ForeignKey(Result, on_delete = models.CASCADE)
+    # result = models.ForeignKey(Result, on_delete = models.CASCADE)
     class Meta:
         ordering = ['created_time']
 
@@ -48,6 +48,7 @@ class Decision(models.Model):
     decision_code = models.IntegerField(default = 0)
     def IsValid(self):
         pass
+
 
 # # class UserProfile(models.Model):
 # #     user = models.ForeignKey(User, on_delete = models.CASCADE)

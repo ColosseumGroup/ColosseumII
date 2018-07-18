@@ -1,23 +1,24 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required,user_passes_test
 
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from backend.models import User,Game,GameType
+from backend.models import User,Game,GameType,JoinGame
 from backend.serializers import UserSerializer, DecisionSerializer
 
 @csrf_exempt    
-def LoginAPI(req):
-    # request = JSONParser().parse(req)
+def LoginAPI(req):# VALID
+    # login api, req in the form of form-data
     if req.method == 'POST':
-        username = req.POST.get("username")
-        password = req.POST.get("password")
+        username = req.POST['username']
+        password = req.POST['password']
         print(username, password)
         usr = authenticate(req,username = username, password = password)
-        # serializer = UserSerializer(data = request)
+        serializer = UserSerializer(data = req)
+        print(serializer)
         print(usr)
         if usr is not None:
             a = login(req, usr)
@@ -30,9 +31,11 @@ def LoginAPI(req):
 
 @csrf_exempt
 @login_required
-def LogoutAPI(req):
+def LogoutAPI(req): # VALID
+    #logout api
     if req.method == 'GET':
-        logout(req)
+        a = logout(req)
+        print(a)
         return HttpResponse("All right, see ya(｡･ω･)ﾉ", status = 200)
 
 @csrf_exempt
@@ -40,6 +43,11 @@ def RegisterAPI(req):
     if req.method == 'GET':
         return HttpResponse(status = 201) # trial
     if req.method == 'POST':
+        serializer = UserSerializer(data = req)
+        print(serializer.is_valid())
+        if serializer.is_valid():
+            print(serializer)
+        """
         username = req.POST.get("username")
         password = req.POST.get("password")
         email = req.POST.get("email")
@@ -51,15 +59,22 @@ def RegisterAPI(req):
         NewUser.save()
         # user_profile = UserProfile(user = NewUser)
         # user_profile.save()
+        """
         return HttpResponse(status = 200)
 
+
 @csrf_exempt
-def CreateOthelloGameAPI(req):
-    # if is_valid():
+@login_required
+def CreateNewGameRoomAPI(req,GameID): # VALID
     if req.method == 'POST':
-        game_type = GameType.objects.get(pk = 1)
+        user_port = req.POST['port']
+        game_type = GameType.objects.get(pk = GameID)
         new_game = Game(game_type = game_type)
+        player = req.user
         new_game.save()
+        join = JoinGame(player = player, game = new_game)
+        join.save()
+        # new_game.players.add(join)
         return HttpResponse(new_game.id,status = 200)
 
 @csrf_exempt
@@ -92,3 +107,4 @@ def GameStepsAPI(req,GameID):
         record = Decision.objects.all().filter(game.objects.get(pk  = GameID))
         serializer = DecisionSerializer(record, many = True)
         return JsonResponse(serializer.data, safe = False)
+
