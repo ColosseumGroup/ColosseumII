@@ -7,7 +7,7 @@
 
 - [x] ``POST``  /login
 - [x] ``GET`` /logout
-- [x] ``POST`` /register
+- [ ] ``POST`` /register
 
 * #### ``POST``  /login 
 
@@ -54,24 +54,36 @@
 
 ### Game
 
-- [x] ``GET`` /game/Othello/
+- [x] ``POST`` /game/{GameTypeID}/create-new-game-room/
 - [x] ``POST`` /game/{GameID}/
 - [x] ``GET`` /game/{GameID}/
-- [x] ``POST`` /game/{GameID}/record/
-- [x] ``GET`` /game/{GameID}/record/
+- [ ] ``POST`` /game/{GameID}/record/
+- [ ] ``GET`` /game/{GameID}/record/
 
-* #### ``GET`` /game/Othello
+* #### ``POST`` /game/{GameTypeID}/create-new-game-room/
 
   ##### Explanation:
 
-  ​	Create a new game of Othello, return the new game ID to user
+  ​	Create a new game room with user's ***port*** and gametype ***GameID***, return the generated room number. Login required.
+
+  ##### Example:
+
+  ```python
+  {
+    "port":"1234",
+  }
+  ```
+
+  ​
 
 
 * #### ``POST`` /game/{GameID}
 
   ##### Explanation:
 
-  ​	Join a new game.
+  ​	Join a new game. Login required.
+
+  ​	Need further implementation when interacting with game server.
 
 * #### ``GET`` /game/{GameID}
 
@@ -80,6 +92,18 @@
   ​	Get the status of game with id = {GameID}
 
   ​	Return the game record in JSON if the game is over.
+
+  **Example:**
+
+  ```python
+  {
+    "game.status": "1", 
+    "game.owner": "WWWlab", 
+    "game.created_time": "2018-07-18T03:00:28.771623+00:00"
+  }
+  ```
+
+  ​
 
 * #### ``POST`` /game/{GameID}/record/
 

@@ -31,6 +31,7 @@ class Game(models.Model):
     game_type = models.ForeignKey(GameType,on_delete = models.CASCADE)
     status = models.CharField(max_length=1, choices = STATUS, default = '0')
     created_time = models.DateTimeField(auto_now_add = True)
+    max_player_num = models.IntegerField(default = 2)
     players = models.ManyToManyField(User, through='JoinGame')
     # result = models.ForeignKey(Result, on_delete = models.CASCADE)
     class Meta:

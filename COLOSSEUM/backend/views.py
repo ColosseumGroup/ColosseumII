@@ -9,6 +9,8 @@ from rest_framework.parsers import JSONParser
 from backend.models import User,Game,GameType,JoinGame
 from backend.serializers import UserSerializer, DecisionSerializer
 
+import json
+
 @csrf_exempt    
 def LoginAPI(req):# VALID
     # login api, req in the form of form-data
@@ -65,10 +67,10 @@ def RegisterAPI(req):
 
 @csrf_exempt
 @login_required
-def CreateNewGameRoomAPI(req,GameID): # VALID
+def CreateNewGameRoomAPI(req,GameTypeID): # VALID
     if req.method == 'POST':
         user_port = req.POST['port']
-        game_type = GameType.objects.get(pk = GameID)
+        game_type = GameType.objects.get(pk = GameTypeID)
         new_game = Game(game_type = game_type)
         player = req.user
         new_game.save()
@@ -78,20 +80,30 @@ def CreateNewGameRoomAPI(req,GameID): # VALID
         return HttpResponse(new_game.id,status = 200)
 
 @csrf_exempt
+@login_required
 def GameInfoAPI(req,GameID):
-    # game = Game.objects.get(pk = GameID)
+    # POST - join game
     if req.method == 'POST':
         usr = req.user
         game = Game.objects.get(pk = GameID)
-        if game.status != '0':
+        if game.status == '0':
             join_game = JoinGame(player = usr, game = game)
+            join_game.save()
+            if game.players.all().count() >= game.max_player_num:
+                game.status = '1'
+                game.save()
+                # send starting information to the game server
             return HttpResponse(status = 200)  
-        return HttpResponse(status = 403)
+        return HttpResponse("Invalid request!",status = 403)
+    # GET - get game info
     elif req.method == 'GET':
         game = Game.objects.get(pk = GameID)
-        return HttpResponse(game.status,status = 200)
+        return HttpResponse(json.dumps({
+            'game.status': game.status ,
+            'game.created_time':game.created_time.isoformat(),
+            'game.owner':game.players.all()[0].username
+        }),status = 200)
     
-
 @csrf_exempt
 def GameStepsAPI(req,GameID):
     game = Game.objects.get(pk = GameID)

@@ -2,7 +2,7 @@
 import Vue from 'vue'
 import store from '@/store'
 import axios from 'axios'
-
+import qs from 'qs'
 Vue.prototype.$http = axios
 axios.defaults.baseURL = '/api'
 // axios.defaults.xsrfHeaderName = 'X-CSRFToken'
@@ -18,9 +18,20 @@ export default {
     // return ajax('announcement', 'get')
   },
   login (data) {
-    return ajax('login', 'post', {
-      data
+    // return ajax('login/', 'post', {
+    //   data:data,
+    //   contentType: 'application/x-www-form-urlencoded'
+    // })
+    console.log("starlogin")
+    return axios({
+      method: 'post',
+      url:'login/',
+      data: qs.stringify(data),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }                                                                                    
     })
+    console.log("finished")
   },
   checkUsernameOrEmail (username, email) {
     // return ajax('check_username_or_email', 'post', {

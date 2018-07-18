@@ -40,6 +40,12 @@
   export default {
     mixins: [FormMixin],
     data () {
+      return {
+        formLogin:{
+          username : 'trial',
+          password : 'trial',
+        }
+      }
       // const CheckRequiredTFA = (rule, value, callback) => {
       //   if (value !== '') {
       //     api.tfaRequiredCheck(value).then(res => {
@@ -48,25 +54,24 @@
       //   }
       //   callback()
       // }
-
-      return {
-        tfaRequired: false,
-        btnLoginLoading: false,
-        formLogin: {
-          username: '',
-          password: '',
-          // tfa_code: ''
-        },
-        ruleLogin: {
-          username: [
-            {required: true, trigger: 'blur'},
-            // {validator: CheckRequiredTFA, trigger: 'blur'}
-          ],
-          password: [
-            {required: true, trigger: 'change', min: 0, max: 30}
-          ]
-        }
-      }
+      // return {
+      //   tfaRequired: false,
+      //   btnLoginLoading: false,
+      //   formLogin: {
+      //     username: '',
+      //     password: '',
+      //     // tfa_code: ''
+      //   },
+      //   ruleLogin: {
+      //     username: [
+      //       {required: true, trigger: 'blur'},
+      //       // {validator: CheckRequiredTFA, trigger: 'blur'}
+      //     ],
+      //     password: [
+      //       {required: true, trigger: 'change', min: 0, max: 30}
+      //     ]
+      //   }
+      // }
     },
     methods: {
       ...mapActions(['changeModalStatus', 'getProfile']),
