@@ -12,9 +12,9 @@ import 'iview/dist/styles/iview.css'
 import Panel from '@oj/components/Panel.vue'
 import VerticalMenu from '@oj/components/verticalMenu/verticalMenu.vue'
 import VerticalMenuItem from '@oj/components/verticalMenu/verticalMenu-item.vue'
-import '@/styles/index.less'
 
 import filters from '@/utils/filters.js'
+import '.src/styles/index.less' 
 
 import ECharts from 'vue-echarts/components/ECharts.vue'
 import 'echarts/lib/chart/bar'

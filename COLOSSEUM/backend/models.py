@@ -33,6 +33,7 @@ class Game(models.Model):
     created_time = models.DateTimeField(auto_now_add = True)
     max_player_num = models.IntegerField(default = 2)
     players = models.ManyToManyField(User, through='JoinGame')
+    server_response = models.TextField(default = '')
     # result = models.ForeignKey(Result, on_delete = models.CASCADE)
     class Meta:
         ordering = ['created_time']

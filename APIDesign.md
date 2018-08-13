@@ -121,3 +121,34 @@
 
   ​	Return the whole record of the game with ID {gameID} till the current time.		
 
+------------------
+
+## 前后端、后端与游戏服务器交互逻辑简记
+
+#### 创建游戏并开始
+
+1. 前端收到房主请求，调用后端CreateNewGameRoomAPI``POST`` (req,GameTypeID)
+
+   返回新游戏id,房主自动加入新游戏
+
+2. 前端显示新房间情况，调用后端``GameInfoAPI(req,GameID)``
+
+   Post:
+
+   将post的用户加入新房间，	
+
+   若用户满足开启游戏条件则向服务器发消息
+
+   GET:
+
+   ​	显示当前房间信息
+
+   ```python
+   {
+       'game.status':...
+       'game.created_time':...
+       'game.players':...
+   }
+   ```
+
+3. 
