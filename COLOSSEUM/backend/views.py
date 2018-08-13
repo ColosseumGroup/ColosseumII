@@ -100,6 +100,21 @@ def CreateNewGameRoomAPI(req,GameTypeID): # VALID
         return HttpResponse(new_game.id,status = 200)
 
 @csrf_exempt
+def GetGameRoomListAPI(req):
+    if req.method == 'GET':
+        available_room_list = Game.objects.filter(status='0')
+        data = {}
+        for i,game in enumerate(available_room_list):
+            data['room_{}'.format(i)]={
+                'game_ID':str(game.id),
+                'game_type':game.game_type.game_name,
+                'players': {           
+                        'name_{}'.format(cnt+1) : player.username for cnt,player in enumerate(game.players.all())  
+                    }                
+            }
+        return JsonResponse(data,status = 200)
+
+@csrf_exempt
 # @login_required
 def GameInfoAPI(req,GameID):
     # POST - join game
@@ -171,6 +186,8 @@ def GameInfoAPI(req,GameID):
             'game':'dealer_renju'
         }
         check_game = InteractWithGameServer(dict_param=game_info,append_url='/api/check',req='POST')
+        game.game_status = check_game
+        game.save()
         return JsonResponse({
             'game_info': {
                 'gameID': str(GameID),

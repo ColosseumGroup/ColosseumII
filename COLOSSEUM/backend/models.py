@@ -1,9 +1,14 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User,AbstractUser
 # User TEST Case:
 #   username = "trial"
 #   password = "trial"
+
+# class User(AbstractUser):
+
+#     games = models.ManyToManyField(User, through='JoinGame')
+
 
 class GameType(models.Model):
     # TEST CASE: <GameType: game_test_1>
@@ -34,7 +39,8 @@ class Game(models.Model):
     max_player_num = models.IntegerField(default = 2)
     players = models.ManyToManyField(User, through='JoinGame')
     server_response = models.TextField(default = '')
-    # result = models.ForeignKey(Result, on_delete = models.CASCADE)
+    game_result = models.TextField(default = '')
+    game_records = models.TextField(default = '')
     class Meta:
         ordering = ['created_time']
 
