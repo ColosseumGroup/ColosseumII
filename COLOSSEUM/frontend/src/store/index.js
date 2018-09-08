@@ -9,12 +9,16 @@ Vue.use(Vuex)
 const debug = process.env.NODE_ENV !== 'production'
 
 const rootState = {
-  website: {},
+  website: {
+    website_name: 'Colosseum',
+    website_name_shortcut: 'Colosseum'
+  },
   modalStatus: {
     mode: 'login', // or 'register',
     visible: false
   }
 }
+
 
 const rootGetters = {
   'website' (state) {
@@ -40,13 +44,13 @@ const rootMutations = {
 }
 
 const rootActions = {
-  getWebsiteConfig ({commit}) {
-    api.getWebsiteConf().then(res => {
-      commit(types.UPDATE_WEBSITE_CONF, {
-        websiteConfig: res.data.data
-      })
-    })
-  },
+  // getWebsiteConfig ({commit}) {
+  //   api.getWebsiteConf().then(res => {
+  //     commit(types.UPDATE_WEBSITE_CONF, {
+  //       websiteConfig: res.data.data
+  //     })
+  //   })
+  // },
   changeModalStatus ({commit}, payload) {
     commit(types.CHANGE_MODAL_STATUS, payload)
   },

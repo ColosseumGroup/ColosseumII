@@ -6,19 +6,30 @@
         <Icon type="ios-person-outline" slot="prepend"></Icon>
         </Input>
       </FormItem>
-      <FormItem prop="email">
-        <Input v-model="formRegister.email" placeholder="Email Address" size="large" @on-enter="handleRegister">
-        <Icon type="ios-email-outline" slot="prepend"></Icon>
-        </Input>
-      </FormItem>
+
       <FormItem prop="password">
         <Input type="password" v-model="formRegister.password" placeholder="Password" size="large" @on-enter="handleRegister">
-        <Icon type="ios-locked-outline" slot="prepend"></Icon>
+        <Icon type="ios-lock-outline" slot="prepend"></Icon>
         </Input>
       </FormItem>
       <FormItem prop="passwordAgain">
         <Input type="password" v-model="formRegister.passwordAgain" placeholder="Password Again" size="large" @on-enter="handleRegister">
-        <Icon type="ios-locked-outline" slot="prepend"></Icon>
+        <Icon type="ios-lock-outline" slot="prepend"></Icon>
+        </Input>
+      </FormItem>
+      <FormItem prop="Email">
+        <Input type="email" v-model="formRegister.email" placeholder="E-mail" size="large" @on-enter="handleRegister">
+        <Icon type="ios-mail-outline" slot="prepend"></Icon>
+        </Input>
+      </FormItem>
+      <FormItem prop="firstName">
+        <Input v-model="formRegister.firstName" placeholder="First Name" size="large" @on-enter="handleRegister">
+        <Icon type="ios-add" slot="prepend"></Icon>
+        </Input>
+      </FormItem>
+      <FormItem prop="lastName">
+        <Input v-model="formRegister.lastName" placeholder="Last Name" size="large" @on-enter="handleRegister">
+        <Icon type="ios-add" slot="prepend"></Icon>
         </Input>
       </FormItem>
       <!-- <FormItem prop="captcha" style="margin-bottom:10px">
@@ -45,7 +56,7 @@
         Register
       </Button>
       <Button
-        type="ghost"
+        type="primary" ghost
         @click="switchMode('login')"
         class="btn" long>
         Already registed? Login now!
@@ -62,26 +73,26 @@
   export default {
     mixins: [FormMixin],
     mounted () {
-      this.getCaptchaSrc()
+      // this.getCaptchaSrc()
     },
     data () {
       const CheckUsernameNotExist = (rule, value, callback) => {
-        api.checkUsernameOrEmail(value, undefined).then(res => {
-          if (res.data.data.username === true) {
-            callback(new Error('The username already exists.'))
-          } else {
-            callback()
-          }
-        }, _ => callback())
+        // api.checkUsernameOrEmail(value, undefined).then(res => {
+        //   if (res.data.data.username === true) {
+        //     callback(new Error('The username already exists.'))
+        //   } else {
+        //     callback()
+        //   }
+        // }, _ => callback())
       }
       const CheckEmailNotExist = (rule, value, callback) => {
-        api.checkUsernameOrEmail(undefined, value).then(res => {
-          if (res.data.data.email === true) {
-            callback(new Error('The email already exists'))
-          } else {
-            callback()
-          }
-        }, _ => callback())
+        // api.checkUsernameOrEmail(undefined, value).then(res => {
+        //   if (res.data.data.email === true) {
+        //     callback(new Error('The email already exists'))
+        //   } else {
+        //     callback()
+        //   }
+        // }, _ => callback())
       }
       const CheckPassword = (rule, value, callback) => {
         if (this.formRegister.password !== '') {
@@ -104,7 +115,9 @@
           username: '',
           password: '',
           passwordAgain: '',
-          email: ''
+          email: '',
+          firstName: '',
+          lastName: ''
           // captcha: ''
         },
         ruleRegister: {
@@ -138,20 +151,26 @@
         })
       },
       handleRegister () {
-        this.validateForm('formRegister').then(valid => {
-          let formData = Object.assign({}, this.formRegister)
-          delete formData['passwordAgain']
-          this.btnRegisterLoading = true
-          api.register(formData).then(res => {
-            this.$success('Thanks for your registering, you can login now')
-            this.switchMode('login')
-            this.btnRegisterLoading = false
-          }, _ => {
-            this.getCaptchaSrc()
-            this.formRegister.captcha = ''
-            this.btnRegisterLoading = false
-          })
+        console.log("trial")
+        let formData = Object.assign({}, this.formRegister)
+        console.log(formData)
+        delete formData['passwordAgain']
+        console.log(formData)          
+        this.btnRegisterLoading = true
+        api.register(formData).then(res => {
+          this.$success('Thanks for your registering, you can login now')
+          this.switchMode('login')
+          this.btnRegisterLoading = false
         })
+        // this.validateForm('formRegister').then(valid => {
+          // console.log("trial2")
+
+          // , _ => {
+            // this.getCaptchaSrc()
+            // this.formRegister.captcha = ''
+            // this.btnRegisterLoading = false
+          // })
+        // })
       }
     },
     computed: {

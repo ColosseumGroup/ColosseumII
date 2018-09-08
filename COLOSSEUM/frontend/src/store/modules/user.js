@@ -33,8 +33,10 @@ const mutations = {
 }
 
 const actions = {
-  getProfile ({commit}) {
-    api.getUserInfo().then(res => {
+  getProfile ({commit},username) {
+    console.log(username)
+    console.log(api.getUserInfo({"username":"abc"}))
+      api.getUserInfo({"username":"abc"}).then(res => {
       commit(types.CHANGE_PROFILE, {
         profile: res.data.data || {}
       })
@@ -54,3 +56,12 @@ export default {
   actions,
   mutations
 }
+
+// let obj = {
+//   str: "ASA",
+//   ass: "ass"
+// }
+
+// let str = obj.str
+
+// {str, ass}=bj

@@ -37,7 +37,7 @@
       }
     },
     mounted () {
-      this.getWebsiteConfig()
+      // this.getWebsiteConfig()
     },
     methods: {
       ...mapActions(['getWebsiteConfig', 'changeDomTitle'])

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required,user_passes_test
@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from backend.models import User,Game,GameType,JoinGame
-from backend.serializers import UserSerializer, DecisionSerializer
+# from backend.serializers import UserSerializer, DecisionSerializer
 # from backend.interact import InteractWithGameServer
 
 import json
@@ -31,65 +31,87 @@ def InteractWithGameServer(dict_param = None, headers = default_headers,append_u
         result = str(response.json())
     return eval(result)
 
+
 @csrf_exempt    
 def LoginAPI(req):# VALID
-    # login api, req in the form of form-data
     if req.method == 'POST':
-        username = req.POST['username']
-        password = req.POST['password']
-        print(username, password)
+        dict_req = eval(req.body)
+        username = dict_req['username']
+        password = dict_req['password']
         usr = authenticate(req,username = username, password = password)
-        serializer = UserSerializer(data = req)
-        print(serializer)
         print(usr)
+        USR = User.objects.get(username = username)
+        print(USR)
         if usr is not None:
-            a = login(req, usr)
-            print(a)
-            return HttpResponse(status = 200)
+            login(req, usr)
+            response = HttpResponse(status = 200)
+            # response["Access-Control-Allow-Origin"] = "*"
+            # response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+            # response["Access-Control-Max-Age"] = "1000"
+            # response["Access-Control-Allow-Headers"] = "*"
+            return response
         else:
-            return HttpResponse("You there! You're the bad guy!(>_<)", status = 400)
-    elif req.method == 'GET':
-            return HttpResponse("What the hell do you think you are doing?!",status = 403)
+            return HttpResponse("InvalidLoginRequest", status = 400)
+
+@csrf_exempt  
+@login_required  
+def ProfileAPI(req):# VALID
+    if req.method == 'POST':
+        dict_req = eval(req.body)
+        username = dict_req['username']
+        USR = User.objects.get(username = username)
+        print(USR)
+        firstName = USR.first_name
+        lastName = USR.last_name
+        retdata={
+            'username':username,
+            'firstName':firstName,
+            'lastName':lastName
+        }
+        print(retdata)
+        # res=JsonResponse(retdata,status=200)
+        # res["Location"] = ""
+        return JsonResponse(retdata, status = 200)
+    if req.method == 'GET':
+        print('get?')
+        return HttpResponseRedirect('/user/profile/')
+        # except:
+            # return HttpResponse("InvalidUserNameReq", status = 400)
 
 @csrf_exempt
 @login_required
 def LogoutAPI(req): # VALID
     #logout api
     if req.method == 'GET':
-        a = logout(req)
-        print(a)
-        return HttpResponse("All right, see ya(｡･ω･)ﾉ", status = 200)
-
-@csrf_exempt
-def RegisterAPI(req):
-    if req.method == 'GET':
-        return HttpResponse(status = 201) # trial
-    if req.method == 'POST':
-        serializer = UserSerializer(data = req)
-        print(serializer.is_valid())
-        if serializer.is_valid():
-            print(serializer)
-        """
-        username = req.POST.get("username")
-        password = req.POST.get("password")
-        email = req.POST.get("email")
-        first_name = req.POST.get("first_name")
-        last_name = req.POST.get("last_name")
-        if User.objects.all().filter(username = username) is None:
-            return HttpResponse(status = 403)
-        NewUser = User.objects.create_user(username = username, password = password, email = email, first_name = first_name, last_name = last_name)
-        NewUser.save()
-        # user_profile = UserProfile(user = NewUser)
-        # user_profile.save()
-        """
+        logout(req)
         return HttpResponse(status = 200)
 
+@csrf_exempt
+def RegisterAPI(req):  #valid
+    if req.method == 'POST':
+        dict_req = eval(req.body)
+        try:
+            username = dict_req['username']
+            password = dict_req['password']
+            email = dict_req['email']
+            first_name = dict_req['firstName']
+            last_name = dict_req['lastName']
+        except:
+            return HttpResponse("InvalidRegisterParams",status = 400)
+        for e in User.objects.all().filter(username = username):
+            if e is not None:
+                # print(User.objects.all().filter(username = username))
+                return HttpResponse("InvalidUsername:"+username,status = 403)
+        NewUser = User.objects.create_user(username = username, password = password, email = email, first_name = first_name, last_name = last_name)
+        NewUser.save()
+        return HttpResponse(status = 200)
 
 @csrf_exempt
 @login_required
 def CreateNewGameRoomAPI(req,GameTypeID): # VALID
     if req.method == 'POST':
-        # user_port = req.POST['port']
+        dict_req = eval(req.body)
+        user_port = dict_req['port']
         game_type = GameType.objects.get(pk = GameTypeID)
         new_game = Game(game_type = game_type)
         player = req.user
@@ -153,6 +175,7 @@ def GameInfoAPI(req,GameID):
             # server, and offering the returned ports to user
             if game.players.all().count() == game.max_player_num: 
                 players = game.players.all()
+                """
                 dict_param = {
                     'gameID': str(GameID),
                     # 'game': game.game_type.game_name,
@@ -166,14 +189,39 @@ def GameInfoAPI(req,GameID):
                         for cnt,player in enumerate(players)
                     ]
                 }
+                """
+                dict_param = {
+                    'gameID': str(GameID),  # just ID number
+                    'game': 'dealer_poker',  # REMEMBER TO CHANGE THIS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    'NPC': 'starter',  # 'False' 'starter' 'master' 'Godlike'
+                    'rounds': '1',
+                    'random_seed': '0',  # 'False' 'int'
+                    'game_define': 'holdem.limit.2p.reverse_blinds.game',  # for poker game define file is required
+                    't_response':'6000000',  # maximum time per response in milliseconds
+                    't_hand': '600000',  # maximum player time per hand in milliseconds
+                    't_per_hand':'70000',  # maximum average player time for match in milliseconds
+                    'wait_time_out':'1000000', # maximum time to wait for players to connect in milliseconds
+                    'keep_transaction':'True', # True if keep the transaction file to rebuild the game
+                    'fixed_ports': {
+                        'if_fixed':'False',  # Random ports if False
+                        'ports':[
+                            {'port_1':'12345'},
+                            {'port_2':'23456'}
+                            ]   # port number if 'if_fixed' is True
+                    },  # try to start a game with given ports by users
+                    'players': [
+                        {'name_{}'.format(cnt+1) : player.username}
+                        for cnt,player in enumerate(players)
+                    ]
+                }                
                 server_response = InteractWithGameServer(dict_param=dict_param, append_url='/api/play',req='POST')
                 # further deal with 
                 game.server_response = json.dumps(server_response)
                 if server_response['status'] == "ongoing":
                     game.status = '1'
                 game.save()
-                return HttpResponse(json.dumps(dict_param)+json.dumps(server_response),status = 200)  
-        return HttpResponse(json.dumps(game.server_response),status = 403)
+                return HttpResponse(json.dumps(dict_param)+server_response,status = 200)  
+        return HttpResponse(game.server_response,status = 403)
     # GET - get game info & status
     elif req.method == 'GET':
         try:
@@ -183,7 +231,7 @@ def GameInfoAPI(req,GameID):
         players = game.players.all()
         game_info = {
             'gameID':str(GameID),
-            'game':'dealer_renju'
+            'game':'dealer_poker'
         }
         check_game = InteractWithGameServer(dict_param=game_info,append_url='/api/check',req='POST')
         game.game_status = check_game
@@ -234,19 +282,20 @@ def GameInfoAPI(req,GameID):
         #     }
         # }
     
-@csrf_exempt
+# @csrf_exempt
 def GameStepsAPI(req,GameID):
-    game = Game.objects.get(pk = GameID)
-    if req.method == 'POST':
-        usr = req.User
-        decision_code = req.POST['decision_code']
-        new_decision = Decision(game = game, user = usr, decision_code = decision_code)
-        if new_decision.IsValid():
-            new_decision.save()
-            return HttpResponse(status = 200) 
-        return HttpResponse("operation not valid",status = 400)
-    elif req.method == 'GET':
-        record = Decision.objects.all().filter(game.objects.get(pk  = GameID))
-        serializer = DecisionSerializer(record, many = True)
-        return JsonResponse(serializer.data, safe = False)
+    pass
+#     game = Game.objects.get(pk = GameID)
+#     if req.method == 'POST':
+#         usr = req.User
+#         decision_code = req.POST['decision_code']
+#         new_decision = Decision(game = game, user = usr, decision_code = decision_code)
+#         if new_decision.IsValid():
+#             new_decision.save()
+#             return HttpResponse(status = 200) 
+#         return HttpResponse("operation not valid",status = 400)
+#     elif req.method == 'GET':
+#         record = Decision.objects.all().filter(game.objects.get(pk  = GameID))
+#         serializer = DecisionSerializer(record, many = True)
+#         return JsonResponse(serializer.data, safe = False)
 

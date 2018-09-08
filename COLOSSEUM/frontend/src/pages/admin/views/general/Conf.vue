@@ -119,10 +119,10 @@
           this.$warning('Please setup SMTP config at first')
         }
       })
-      api.getWebsiteConfig().then(res => {
-        this.websiteConfig = res.data.data
-      }).catch(() => {
-      })
+      // api.getWebsiteConfig().then(res => {
+      //   this.websiteConfig = res.data.data
+      // }).catch(() => {
+      // })
     },
     methods: {
       saveSMTPConfig () {

@@ -5,16 +5,18 @@
       <Panel :padding="40" shadow>
         <div slot="title">{{problem.title}}</div>
         <div id="problem-content" class="markdown-body">
-          <p class="title">Description</p>
-          <p class="content" v-html=problem.description></p>
+          <p class="title">Game: Dealer Renju</p>
+          <!-- <p class="content" v-html=problem.description></p> -->
+          <p class="content" >rules</p>
 
-          <p class="title">Input</p>
-          <p class="content" v-html=problem.input_description></p>
+          <p class="title">Rules and Descriptions</p>
+          <p class="content" > two player zero-sum game</p>
+          <!-- <p class="content" v-html=problem.input_description></p> -->
 
-          <p class="title">Output</p>
-          <p class="content" v-html=problem.output_description></p>
-
-          <div v-for="{sample, index} in problem.samples" :key = "index">
+          <!-- <p class="content" v-html=problem.output_description></p> -->
+        </div>
+        <div>
+          <!-- <div v-for="{sample, index} in problem.samples" :key = "index">
             <div class="flex-container sample">
               <div class="sample-input">
                 <p class="title">Sample Input {{index + 1}}
@@ -32,14 +34,14 @@
                 <pre>{{sample.output}}</pre>
               </div>
             </div>
-          </div>
+          </div> -->
 
-          <div v-if="problem.hint">
+          <!-- <div v-if="problem.hint">
             <p class="title">Hint</p>
             <Card dis-hover>
               <div class="content" v-html=problem.hint></div>
             </Card>
-          </div>
+          </div> -->
 
           <div v-if="problem.source">
             <p class="title">Source</p>
@@ -49,8 +51,11 @@
         </div>
       </Panel>
       <!--problem main end-->
-      <Card :padding="20" id="submit-code" dis-hover>
-        <CodeMirror :value.sync="code" @changeLang="onChangeLang" :languages="problem.languages"
+      <Card :padding="20" id="submit-code" >
+        <!-- <div slot="title">Curent Players</div> -->
+        <Table style="width:100%" :columns="playerColumns" :data="playerData"></Table>
+      </Card>        
+        <!-- <CodeMirror :value.sync="code" @changeLang="onChangeLang" :languages="problem.languages"
                     :language="language"></CodeMirror>
         <Row type="flex" justify="space-between">
           <Col :span="10">
@@ -92,11 +97,11 @@
           </Button>
           </Col>
         </Row>
-      </Card>
+      </Card> -->
     </div>
 
     <div id="right-column">
-      <VerticalMenu @on-click="handleRoute">
+      <!-- <VerticalMenu @on-click="handleRoute">
         <template v-if="this.contestID">
           <VerticalMenu-item :route="{name: 'contest-problem-list', params: {contestID: contestID}}">
             <Icon type="ios-photos"></Icon>
@@ -125,12 +130,12 @@
             View Contest
           </VerticalMenu-item>
         </template>
-      </VerticalMenu>
+      </VerticalMenu> -->
 
       <Card id="info">
         <div slot="title" class="header">
           <Icon type="information-circled"></Icon>
-          <span class="card-title">Information</span>
+          <span class="card-title"><b>Game Information</b></span>
         </div>
         <ul>
           <li><p>ID</p>
@@ -151,7 +156,7 @@
             <p>Score</p>
             <p>{{problem.total_score}}</p>
           </li>
-          <li>
+          <!-- <li>
             <p>Tags</p>
             <p>
               <Poptip trigger="hover" placement="left-end">
@@ -161,11 +166,11 @@
                 </div>
               </Poptip>
             </p>
-          </li>
+          </li> -->
         </ul>
       </Card>
 
-      <Card id="pieChart" :padding="0" v-if="!this.contestID || OIContestRealTimePermission">
+      <!-- <Card id="pieChart" :padding="0" v-if="!this.contestID || OIContestRealTimePermission">
         <div slot="title">
           <Icon type="ios-analytics"></Icon>
           <span class="card-title">Statistic</span>
@@ -174,7 +179,7 @@
         <div class="echarts">
           <ECharts :options="pie"></ECharts>
         </div>
-      </Card>
+      </Card>  -->
     </div>
 
     <Modal v-model="graphVisible">
@@ -209,6 +214,31 @@
     mixins: [FormMixin],
     data () {
       return {
+        playerColumns:[
+          {
+              type: 'index',
+              width: 60,
+              align: 'center'
+          },          
+          {
+              title:'Account',
+              key:'playerAccount'
+          },
+          {
+              title:'Status',
+              key:'playerStatus'
+          }
+        ],
+        playerData: [
+          {
+            playerAccount:'trial1',
+            playerStatus:'pending'
+          },
+          {
+            playerAccount:'trial2',
+            playerStatus:'connected'
+          }
+        ],
         statusVisible: false,
         captchaRequired: false,
         graphVisible: false,

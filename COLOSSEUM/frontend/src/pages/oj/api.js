@@ -4,7 +4,7 @@ import store from '@/store'
 import axios from 'axios'
 import qs from 'qs'
 Vue.prototype.$http = axios
-axios.defaults.baseURL = '/api'
+axios.defaults.baseURL = 'http://localhost:8000/api'
 // axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 // axios.defaults.xsrfCookieName = 'csrftoken'
 
@@ -18,20 +18,15 @@ export default {
     // return ajax('announcement', 'get')
   },
   login (data) {
-    // return ajax('login/', 'post', {
-    //   data:data,
-    //   contentType: 'application/x-www-form-urlencoded'
-    // })
-    console.log("starlogin")
     return axios({
       method: 'post',
-      url:'login/',
-      data: qs.stringify(data),
+      url:'user/login/',
+      data: data,
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
       }                                                                                    
     })
-    console.log("finished")
   },
   checkUsernameOrEmail (username, email) {
     // return ajax('check_username_or_email', 'post', {
@@ -43,22 +38,35 @@ export default {
   },
   // 注册
   register (data) {
-    return ajax('register', 'post', {
-      data
+    return axios({
+      method: 'post',
+      url:'user/register/',
+      data: data,
+      headers: {
+        'Location': '',
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }                                                                                    
     })
   },
   logout () {
     // return ajax('logout', 'get')
   },
   getCaptcha () {
+    // return
     // return ajax('captcha', 'get')
   },
-  getUserInfo (username = undefined) {
-    // return ajax('profile', 'get', {
-    //   params: {
-    //     username
-    //   }
-    // })
+  getUserInfo (data) {
+    console.log("getuserinfo")
+    return axios({
+      method: 'post',
+      url:'/user/profile/',
+      data: data,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }                                                                                    
+    })    
   },
   updateProfile (profile) {
     // return ajax('profile', 'put', {
@@ -120,17 +128,25 @@ export default {
   getProblemTagList () {
     // return ajax('problem/tags', 'get')
   },
-  getProblemList (offset, limit, searchParams) {
-    let params = {
-      paging: true,
-      offset,
-      limit
-    }
-    Object.keys(searchParams).forEach((element) => {
-      if (searchParams[element]) {
-        params[element] = searchParams[element]
-      }
+  getProblemList () {
+    return axios({
+      method: 'get',
+      url:'game/list/',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }                                                                                    
     })
+    // let params = {
+    //   paging: true,
+    //   offset,
+    //   limit
+    // }
+    // Object.keys(searchParams).forEach((element) => {
+    //   if (searchParams[element]) {
+    //     params[element] = searchParams[element]
+    //   }
+    // })
     // return ajax('problem', 'get', {
     //   params: params
     // })

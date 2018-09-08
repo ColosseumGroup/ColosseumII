@@ -25,7 +25,7 @@ SECRET_KEY = 't%^!adx#+8cqo&2z6_$qm4phyecu@5@(=($y+o)c8c6av-lt7c'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost',]
 
 
 # Application definition
@@ -75,6 +75,9 @@ TEMPLATES = [
 CORS_ORIGIN_ALLOW_ALL= True
 CORS_ALLOW_CREDENTIALS= True
 CORS_ALLOW_HEADERS = ('*')
+CORS_ORIGIN_WHITELIST = (
+      'localhost:8080',
+)
 
 WSGI_APPLICATION = 'COLOSSEUM.wsgi.application'
 

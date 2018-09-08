@@ -11,7 +11,7 @@ axios.defaults.xsrfCookieName = 'csrftoken'
 export default {
   // 登录
   login (username, password) {
-    return ajax('login', 'post', {
+    return ajax('user/login', 'post', {
       data: {
         username,
         password
@@ -120,9 +120,9 @@ export default {
       }
     })
   },
-  getWebsiteConfig () {
-    return ajax('admin/website', 'get')
-  },
+  // getWebsiteConfig () {
+  //   return ajax('admin/website', 'get')
+  // },
   editWebsiteConfig (data) {
     return ajax('admin/website', 'post', {
       data

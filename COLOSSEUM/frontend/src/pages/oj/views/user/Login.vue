@@ -8,7 +8,7 @@
       </FormItem>
       <FormItem prop="password">
         <Input type="password" v-model="formLogin.password" placeholder="Password" size="large" @on-enter="handleLogin">
-        <Icon type="ios-locked-outline" slot="prepend"></Icon>
+        <Icon type="ios-lock-outline" slot="prepend"></Icon>
         </Input>
       </FormItem>
       <!-- <FormItem prop="tfa_code" v-if="tfaRequired">
@@ -42,8 +42,8 @@
     data () {
       return {
         formLogin:{
-          username : 'trial',
-          password : 'trial',
+          username : 'abc',
+          password : 'abcabc',
         }
       }
       // const CheckRequiredTFA = (rule, value, callback) => {
@@ -91,12 +91,15 @@
           api.login(formData).then(res => {
             this.btnLoginLoading = false
             this.changeModalStatus({visible: false})
-            this.getProfile()
+            this.$route.query.username = formData.username
+            // console.log(this.$route.query.username)
             this.$success('Welcome back to OJ')
           }, _ => {
             this.btnLoginLoading = false
           })
+          this.getProfile(this.$route.query.username)          
         })
+
       },
       goResetPassword () {
         this.changeModalStatus({visible: false})

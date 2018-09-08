@@ -3,34 +3,34 @@
     <Menu theme="light" mode="horizontal" @on-select="handleRoute" :active-name="activeMenu" class="oj-menu">
       <div class="logo"><span>{{website.website_name}}</span></div>
       <Menu-item name="/">
-        <Icon type="home"></Icon>
+        <Icon type="ios-home-outline"></Icon>
         Home
       </Menu-item>
       <Menu-item name="/problems">
-        <Icon type="ios-keypad"></Icon>
-        Problems
+        <Icon type="ios-keypad-outline"></Icon>
+        Games
       </Menu-item>
       <Menu-item name="/contests">
-        <Icon type="trophy"></Icon>
+        <Icon type="ios-trophy-outline"></Icon>
         Contests
       </Menu-item>
-      <Menu-item name="/status">
+      <!-- <Menu-item name="/status">
         <Icon type="ios-pulse-strong"></Icon>
         Status
-      </Menu-item>
-      <Submenu name="">
+      </Menu-item> -->
+      <Submenu name="3">
         <template slot="title">
-          <Icon type="podium"></Icon>
+          <Icon type="ios-podium-outline"></Icon>
           Rank
         </template>
-        <Menu-item name="/acm-rank">
+        <Menu-item name="acm-rank">
           ACM Rank
         </Menu-item>
-        <Menu-item name="/oi-rank">
+        <Menu-item name="oi-rank">
           OI Rank
         </Menu-item>
       </Submenu>
-      <Submenu name="">
+      <!-- <Submenu name="">
         <template slot="title">
           <Icon type="information-circled"></Icon>
           About
@@ -41,17 +41,18 @@
         <Menu-item name="/FAQ">
           FAQ
         </Menu-item>
-      </Submenu>
+      </Submenu> -->
       <template v-if="!isAuthenticated">
         <div class="btn-menu">
-          <Button type="ghost"
+          <Button 
+                  type="default" 
                   ref="loginBtn"
                   shape="circle"
                   @click="handleBtnClick('login')">Login
           </Button>
           <!-- <Button v-if="website.allow_register" -->
           <Button
-                  type="ghost"
+                  type="default"
                   shape="circle"
                   @click="handleBtnClick('register')"
                   style="margin-left: 5px;">Register
@@ -59,16 +60,19 @@
         </div>
       </template>
       <template v-else>
-        <Dropdown class="drop-menu" @on-click="handleRoute" placement="bottom" trigger="click">
-          <Button type="text" class="drop-menu-title">{{ user.username }}
-            <Icon type="arrow-down-b"></Icon>
+        <Dropdown class="drop-menu" placement="bottom-end" trigger="click">
+        <!-- <Dropdown> -->
+          <Button type="text" class="drop-menu-title">{{ 'Welcome,'+'user.username' }}
+            <Icon type="ios-arrow-down"></Icon>
           </Button>
           <Dropdown-menu slot="list">
-            <Dropdown-item name="/user-home">Home</Dropdown-item>
+            <Dropdown-item>Submissions</Dropdown-item>
+            <Dropdown-item>Settings</Dropdown-item>
+            <!-- <Dropdown-item name="/user-home">Home</Dropdown-item>
             <Dropdown-item name="/status?myself=1">Submissions</Dropdown-item>
             <Dropdown-item name="/setting/profile">Settings</Dropdown-item>
             <Dropdown-item v-if="isAdminRole" name="/admin">Management</Dropdown-item>
-            <Dropdown-item divided name="/logout">Logout</Dropdown-item>
+            <Dropdown-item divided name="/logout">Logout</Dropdown-item> -->
           </Dropdown-menu>
         </Dropdown>
       </template>
