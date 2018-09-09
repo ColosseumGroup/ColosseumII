@@ -54,7 +54,7 @@ def LoginAPI(req):# VALID
             return HttpResponse("InvalidLoginRequest", status = 400)
 
 @csrf_exempt  
-@login_required  
+# @login_required  
 def ProfileAPI(req):# VALID
     if req.method == 'POST':
         dict_req = eval(req.body)
@@ -72,9 +72,12 @@ def ProfileAPI(req):# VALID
         # res=JsonResponse(retdata,status=200)
         # res["Location"] = ""
         return JsonResponse(retdata, status = 200)
-    if req.method == 'GET':
+    elif req.method == 'GET':
         print('get?')
         return HttpResponseRedirect('/user/profile/')
+    else:
+        print('other?')
+        return HttpResponse(status = 300)
         # except:
             # return HttpResponse("InvalidUserNameReq", status = 400)
 
@@ -107,7 +110,7 @@ def RegisterAPI(req):  #valid
         return HttpResponse(status = 200)
 
 @csrf_exempt
-@login_required
+# @login_required
 def CreateNewGameRoomAPI(req,GameTypeID): # VALID
     if req.method == 'POST':
         dict_req = eval(req.body)

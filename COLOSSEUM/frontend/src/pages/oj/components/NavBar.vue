@@ -62,9 +62,9 @@
       <template v-else>
         <Dropdown class="drop-menu" placement="bottom-end" trigger="click">
         <!-- <Dropdown> -->
-          <Button type="text" class="drop-menu-title">{{ 'Welcome,'+'user.username' }}
+          <a type="text" class="drop-menu-title">{{ 'Welcome,'+ user.firstName + ' ' + user.lastName}}
             <Icon type="ios-arrow-down"></Icon>
-          </Button>
+          </a>
           <Dropdown-menu slot="list">
             <Dropdown-item>Submissions</Dropdown-item>
             <Dropdown-item>Settings</Dropdown-item>

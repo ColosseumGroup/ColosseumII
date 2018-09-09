@@ -47,7 +47,7 @@
                    icon="ios-search-strong"/>
           </li> -->
           <li>
-            <Button type="info" @click="onReset">
+            <Button type="info" @click="createGame">
               <Icon type="md-add"></Icon>
               Create New Game!
             </Button>
@@ -100,7 +100,7 @@
     },
     data () {
       return {
-        tmpdata:[],
+        // tmpdata:[],
         value1: '1',
         tagList: [],
         problemTableColumns:[
@@ -243,10 +243,8 @@
     methods: {
       init (simulate = false) { 
         console.log("init")
-        tmpdata = api.getProblemList()
+        let tmpdata = api.getProblemList()
         console.log(tmpdata)
-        
-        
         this.routeName = this.$route.name
         let query = this.$route.query
         this.query.difficulty = query.difficulty || ''
@@ -335,8 +333,9 @@
           this.problemTableColumns.splice(this.problemTableColumns.length - 1, 1)
         }
       },
-      onReset () {
-        this.$router.push({name: 'problem-list'})
+      createGame () {
+        api.createNewGame(1,1)
+        // this.$router.push({name: 'problem-list'})
       },
       pickone () {
         api.pickone().then(res => {

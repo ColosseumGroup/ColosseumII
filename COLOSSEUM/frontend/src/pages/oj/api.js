@@ -3,8 +3,9 @@ import Vue from 'vue'
 import store from '@/store'
 import axios from 'axios'
 import qs from 'qs'
+
 Vue.prototype.$http = axios
-axios.defaults.baseURL = 'http://localhost:8000/api'
+axios.defaults.baseURL = 'http://localhost:8000/api/'
 // axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 // axios.defaults.xsrfCookieName = 'csrftoken'
 
@@ -28,6 +29,18 @@ export default {
       }                                                                                    
     })
   },
+  createNewGame(port,gameType){
+    return axios({
+      method: 'get',
+      url:'game/list/',
+      // url:'/game/create/'+gameType+'/',
+      data:{port:port},
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }      
+    })
+  },
   checkUsernameOrEmail (username, email) {
     // return ajax('check_username_or_email', 'post', {
     //   data: {
@@ -43,7 +56,6 @@ export default {
       url:'user/register/',
       data: data,
       headers: {
-        'Location': '',
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
       }                                                                                    
@@ -53,14 +65,12 @@ export default {
     // return ajax('logout', 'get')
   },
   getCaptcha () {
-    // return
     // return ajax('captcha', 'get')
   },
   getUserInfo (data) {
-    console.log("getuserinfo")
     return axios({
       method: 'post',
-      url:'/user/profile/',
+      url:'user/prof/',
       data: data,
       headers: {
         'Content-Type': 'application/json',

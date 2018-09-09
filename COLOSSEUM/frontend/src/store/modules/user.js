@@ -4,14 +4,17 @@ import storage from '@/utils/storage'
 import { STORAGE_KEY, USER_TYPE, PROBLEM_PERMISSION } from '@/utils/constants'
 
 const state = {
-  profile: {}
+  profile: {
+    user:{}
+  }
 }
 
 const getters = {
-  user: state => state.profile.user || {},
+  // user: state => state.profile.user || {},
+  user: state => state.profile || {},
   profile: state => state.profile,
   isAuthenticated: (state, getters) => {
-    return !!getters.user.id
+    return !!getters.user.username
   },
   isAdminRole: (state, getters) => {
     return getters.user.admin_type === USER_TYPE.ADMIN ||
@@ -33,13 +36,14 @@ const mutations = {
 }
 
 const actions = {
+  // getProfile (username) {
+    // api.getUserInfo({"username":"abc"})
   getProfile ({commit},username) {
-    console.log(username)
-    console.log(api.getUserInfo({"username":"abc"}))
-      api.getUserInfo({"username":"abc"}).then(res => {
+      api.getUserInfo({"username":username}).then(res => {
       commit(types.CHANGE_PROFILE, {
-        profile: res.data.data || {}
+        profile : res.data || {}
       })
+      console.log(state.profile.firstName)
     })
   },
   clearProfile ({commit}) {

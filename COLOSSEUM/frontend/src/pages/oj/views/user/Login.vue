@@ -82,7 +82,7 @@
         })
       },
       handleLogin () {
-        this.validateForm('formLogin').then(valid => {
+        this.validateForm('formLogin').then(valid => { 
           this.btnLoginLoading = true
           let formData = Object.assign({}, this.formLogin)
           if (!this.tfaRequired) {
@@ -92,12 +92,11 @@
             this.btnLoginLoading = false
             this.changeModalStatus({visible: false})
             this.$route.query.username = formData.username
-            // console.log(this.$route.query.username)
+            this.getProfile(this.$route.query.username)          
             this.$success('Welcome back to OJ')
           }, _ => {
             this.btnLoginLoading = false
           })
-          this.getProfile(this.$route.query.username)          
         })
 
       },
