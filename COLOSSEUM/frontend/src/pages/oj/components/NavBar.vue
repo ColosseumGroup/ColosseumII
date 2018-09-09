@@ -131,7 +131,6 @@
     }
   }
 </script>
-
 <style lang="less" scoped>
   #header {
     position: fixed;
@@ -168,7 +167,6 @@
       margin-right: 10px;
     }
   }
-
   .modal {
     &-title {
       font-size: 18px;

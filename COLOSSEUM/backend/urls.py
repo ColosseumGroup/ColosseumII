@@ -6,7 +6,7 @@ urlpatterns = [
     path('user/prof/',views.ProfileAPI),
     path('user/register/',views.RegisterAPI),
     path('game/create/<str:GameTypeName>/',views.CreateNewGameRoomAPI),
-    path('game/list/',views.GetGameRoomListAPI),
+    path('game/list/<int:status>/',views.GetGameRoomListAPI),
     path('game/<int:GameID>/', views.GameInfoAPI),
     path('game/<int:GameID>/record/', views.GameStepsAPI),
 ]

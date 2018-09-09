@@ -2,15 +2,19 @@
   <div class="flex-container">
     <div id="problem-main">
       <!--problem main-->
-      <Panel :padding="40" shadow>
-        <div slot="title">{{problem.title}}</div>
+      <Panel :padding="20" shadow>
+        <div slot="title">
+          <b>{{gameInfo.game}}</b></div>
         <div id="problem-content" class="markdown-body">
-          <p class="title">Game: Dealer Renju</p>
+          <p class="title">
+          <Icon type="ios-book-outline" />            
+            Description</p>
+  
           <!-- <p class="content" v-html=problem.description></p> -->
-          <p class="content" >rules</p>
+          <p class="content" >{{gameInfo.game_description}}</p>
 
-          <p class="title">Rules and Descriptions</p>
-          <p class="content" > two player zero-sum game</p>
+          <!-- <p class="title">Rules and Descriptions</p>
+          <p class="content" > two player zero-sum game</p> -->
           <!-- <p class="content" v-html=problem.input_description></p> -->
 
           <!-- <p class="content" v-html=problem.output_description></p> -->
@@ -57,9 +61,8 @@
         <ul class="filter">
           <li>
             <span><b>Select Port: </b></span>
-            <Dropdown>
-              <!-- <span>{{query.port}} -->
-              <span>abc
+            <Dropdown @on-click="selectPort">
+              <span>{{joinQuery.port}}
                 <Icon type="md-arrow-dropdown"></Icon>
               </span>
               <Dropdown-menu slot="list">
@@ -71,23 +74,9 @@
             </Dropdown>
           </li>
           <li>
-            <span><b>Select Game Type:</b></span>            
-            <!-- <Dropdown @on-click="filterByDifficulty"> -->
-            <Dropdown>
-              <!-- <span>{{query.gameType}} -->
-              <span>
-                <Icon type="md-arrow-dropdown"></Icon>
-              </span>
-              <Dropdown-menu slot="list">
-                <Dropdown-item name="dealer_renju">dealer_renju</Dropdown-item>
-                <Dropdown-item name="dealer_poker">dealer_poker</Dropdown-item>
-              </Dropdown-menu>
-            </Dropdown>
-          </li>
-          <li>
-            <Button type="info" @click="createGame">
-              <Icon type="md-add"></Icon>
+            <Button type="info" @click="joinGame">
               Join Game
+              <Icon type="md-arrow-dropright"></Icon>              
             </Button>
           </li>        </ul>
         <Table style="width:100%" :columns="playerColumns" :data="playerData"></Table>
@@ -175,17 +164,18 @@
           <span class="card-title"><b>Game Information</b></span>
         </div>
         <ul>
-          <li><p>ID</p>
-            <p>{{problem._id}}</p></li>
-          <li>
+          <li><p>Game ID</p>
+            <p>{{gameInfo.gameID}}</p></li>
+          <!-- <li>
             <p>Time Limit</p>
-            <p>{{problem.time_limit}}MS</p></li>
+            <p>{{problem.time_limit}}MS</p></li> -->
           <li>
-            <p>Memory Limit</p>
-            <p>{{problem.memory_limit}}MB</p></li>
+            <p>Game Status</p>
+            <p>{{currentStatus.description}}</p>
+            </li>
           <li>
             <p>Created By</p>
-            <p>{{problem.created_by.username}}</p></li>
+            <p>{{gameInfo.players['0'].account}}</p></li>
           <li v-if="problem.difficulty">
             <p>Level</p>
             <p>{{problem.difficulty}}</p></li>
@@ -251,6 +241,8 @@
     mixins: [FormMixin],
     data () {
       return {
+        gameInfo:[],
+        currentStatus:[],
         playerColumns:[
           {
               type: 'index',
@@ -259,22 +251,22 @@
           },          
           {
               title:'Account',
-              key:'playerAccount'
+              key:'account'
           },
           {
-              title:'Status',
-              key:'playerStatus'
+              title:'Assigned Port',
+              key:'assignedPort'
           }
         ],
         playerData: [
-          {
-            playerAccount:'trial1',
-            playerStatus:'pending'
-          },
-          {
-            playerAccount:'trial2',
-            playerStatus:'connected'
-          }
+          // {
+          //   playerAccount:'trial1',
+          //   assignedPort:'12345'
+          // },
+          // {
+          //   playerAccount:'trial2',
+          //   assignedPort:'12345'
+          // }
         ],
         statusVisible: false,
         captchaRequired: false,
@@ -302,6 +294,9 @@
             username: ''
           },
           tags: []
+        },
+        joinQuery: {
+          port: '0',
         },
         pie: pie,
         largePie: largePie,
@@ -331,9 +326,9 @@
       ...mapActions(['changeDomTitle']),
       init () {
         this.$Loading.start()
-        this.contestID = this.$route.params.contestID
-        this.gameID = this.$route.params.game_ID
-        console.log(gameID)
+        // this.contestID = this.$router.params.contestID
+        this.gameID = this.$route.params.gameID
+        this.getGameInfo(this.gameID)
         let func = this.$route.name === 'problem-details' ? 'getProblem' : 'getContestProblem'
         api[func](this.gameID, this.contestID).then(res => {
           this.$Loading.finish()
@@ -364,6 +359,24 @@
           this.$Loading.error()
         })
       },
+      selectPort(port){
+        this.joinQuery.port = port
+      },
+      getGameInfo(gameID){
+        api.getGameInfo(gameID).then(res=>{
+          console.log(res.data)
+          this.currentStatus = res.data.current_status
+          this.gameInfo = res.data.game_info
+          this.playerData = this.gameInfo['players']
+          console.log(this.playerData)
+        })
+      },
+      joinGame () {
+        let username = this.$store.state.user.profile.username
+        api.joinGame(username,this.joinQuery.port,this.gameID)
+        // this.$router.push({name: 'problem'})
+        // this.init()
+      },      
       changePie (problemData) {
         // 只显示特定的一些状态
         for (let k in problemData.statistic_info) {
@@ -565,7 +578,7 @@
     }
     #right-column {
       flex: none;
-      width: 220px;
+      width: 320px;
     }
   }
 

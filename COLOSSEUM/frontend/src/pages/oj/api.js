@@ -40,6 +40,17 @@ export default {
       }      
     })
   },
+  joinGame(username,port,gameID){
+    return axios({
+      method:'post',
+      url:'/game/'+gameID+'/',
+      data:{port:port, username:username},
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }       
+    })
+  },
   checkUsernameOrEmail (username, email) {
     // return ajax('check_username_or_email', 'post', {
     //   data: {
@@ -76,6 +87,12 @@ export default {
         'Access-Control-Allow-Origin': '*'
       }                                                                                    
     })    
+  },
+  getGameInfo(gameID){
+    return axios({
+      method:'get',
+      url:'game/'+gameID+'/'
+    })
   },
   updateProfile (profile) {
     // return ajax('profile', 'put', {
@@ -137,10 +154,10 @@ export default {
   getProblemTagList () {
     // return ajax('problem/tags', 'get')
   },
-  getProblemList () {
+  getGameList (status) {
     return axios({
       method: 'get',
-      url:'game/list/',
+      url:'game/list/'+status+'/',
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'

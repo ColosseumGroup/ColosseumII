@@ -15,6 +15,8 @@ import requests
 import http
 import urllib.parse
 
+import backend.examples
+
 game_server_url = 'http://139.224.114.52'
 port = 8081
 default_headers ={
@@ -118,7 +120,7 @@ def CreateNewGameRoomAPI(req,GameTypeName): # VALID
         username = dict_req['username']
         game_type = GameType.objects.get(game_name = GameTypeName)
         new_game = Game(game_type = game_type)
-        player = User.objects.get(username = username)
+        player = User.objects.get(username = username)  
         new_game.save() 
         join = JoinGame(player = player, game = new_game)
         join.save()
@@ -126,9 +128,9 @@ def CreateNewGameRoomAPI(req,GameTypeName): # VALID
         return HttpResponse(new_game.id,status = 200)
 
 @csrf_exempt
-def GetGameRoomListAPI(req):
+def GetGameRoomListAPI(req,status):
     if req.method == 'GET':
-        available_room_list = Game.objects.filter(status='0')
+        available_room_list = Game.objects.filter(status=status)
         data = {}
         for i,game in enumerate(available_room_list):
             data['room_{}'.format(i)]={
@@ -145,22 +147,48 @@ def GetGameRoomListAPI(req):
 def GameInfoAPI(req,GameID):
     # POST - join game
     if req.method == 'POST':
-        usr = req.user
+        usr = User.objects.get(username=eval(req.body)['username'])
+        port = eval(req.body)['port']
         game = Game.objects.get(pk = GameID)
         players = game.players.all()
+        # dict_param = {
+        #     'gameID': str(GameID),
+        #     # 'game': game.game_type.game_name,
+        #     'game': 'dealer_renju',
+        #     'NPC': 'starter',
+        #     'rounds':'1',
+        #     'random_seed':'False',
+        #     'game_define':'False',
+        #     'players': [
+        #         {'name_{}'.format(cnt+1) : player.username}
+        #         for cnt,player in enumerate(players)
+        #     ]
+        # }
         dict_param = {
             'gameID': str(GameID),
-            # 'game': game.game_type.game_name,
-            'game': 'dealer_renju',
-            'NPC': 'starter',
-            'rounds':'1',
-            'random_seed':'False',
-            'game_define':'False',
+            'game': game.game_type.game_name,
+            'NPC': 'starter',  # 'False' 'starter' 'master' 'Godlike'
+            'rounds': '100',
+            'random_seed': '0',  # 'False' 'int'
+            'game_define': 'holdem.limit.2p.reverse_blinds.game',  # for poker game define file is required
+            't_response':'6000000',  # maximum time per response in milliseconds
+            't_hand': '600000',  # maximum player time per hand in milliseconds
+            't_per_hand':'70000',  # maximum average player time for match in milliseconds
+            'wait_time_out':'1000000', # maximum time to wait for players to connect in milliseconds
+            'keep_transaction':'True', # True if keep the transaction file to rebuild the game
+            'fixed_ports': {
+                'if_fixed':'False',  # Random ports if False
+                'ports':[
+                    {'port_1':'12345'},
+                    {'port_2':'23456'}
+                    ]   # port number if 'if_fixed' is True
+            },  # try to start a game with given ports by users
             'players': [
                 {'name_{}'.format(cnt+1) : player.username}
                 for cnt,player in enumerate(players)
-            ]
+            ]           
         }
+        
         # DEV-NOTES:
         # the requests.post showed many an exception in this case
         # it first claimed that 
@@ -196,7 +224,7 @@ def GameInfoAPI(req,GameID):
                 """
                 dict_param = {
                     'gameID': str(GameID),  # just ID number
-                    'game': 'dealer_poker',  # REMEMBER TO CHANGE THIS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    'game': game.game_type.game_name,  # REMEMBER TO CHANGE THIS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     'NPC': 'starter',  # 'False' 'starter' 'master' 'Godlike'
                     'rounds': '1',
                     'random_seed': '0',  # 'False' 'int'
@@ -224,10 +252,10 @@ def GameInfoAPI(req,GameID):
                 if server_response['status'] == "ongoing":
                     game.status = '1'
                 game.save()
-                return HttpResponse(json.dumps(dict_param)+server_response,status = 200)  
+                return HttpResponse(json.dumps(dict_param)+game.server_response,status = 200)  
         return HttpResponse(game.server_response,status = 403)
     # GET - get game info & status
-    elif req.method == 'GET':
+    if req.method == 'GET':
         try:
             game = Game.objects.get(pk = GameID)
         except: # if there is no matching game ID
@@ -235,30 +263,50 @@ def GameInfoAPI(req,GameID):
         players = game.players.all()
         game_info = {
             'gameID':str(GameID),
-            'game':'dealer_poker'
+            'action': 'status'
         }
-        check_game = InteractWithGameServer(dict_param=game_info,append_url='/api/check',req='POST')
-        game.game_status = check_game
-        game.save()
-        return JsonResponse({
-            'game_info': {
-                'gameID': str(GameID),
-                # 'game': game.game_type.game_name,
-                'game': 'dealer_renju',
-                'NPC': 'starter',
-                'rounds':'1',
-                'random_seed':'False',
-                'game_define':'False',
-                'players': [
-                    {
-                        'name_{}'.format(cnt+1) : player.username,
-                        'port_{}'.format(cnt+1): json.loads(game.server_response)['ports']['player{}_port'.format(cnt)]
-                    }
-                    for cnt,player in enumerate(game.players.all())
-                ]                
-            },
-            'current_status': check_game
-        },status = 200)
+        game.game_status = InteractWithGameServer(dict_param=game_info,append_url='/api/kill',req='POST')
+        print(game.game_status)
+        if game.status == '0':
+            return JsonResponse({
+                'game_info': {
+                    'gameID': str(GameID),
+                    'game': game.game_type.game_name.upper(),
+                    'game_description': game.game_type.game_description,
+                    'status':'pending',
+                    'players': [
+                        {
+                            'account' : player.username,
+                            'assignedPort': 'Pending...'
+                        }
+                        for cnt,player in enumerate(game.players.all())
+                    ]                
+                },
+                'current_status': 'pending'
+            },status = 200)
+        else:
+            game.save()
+            print(json.loads(game.server_response))
+            return JsonResponse({
+                'game_info': {
+                    'gameID': str(GameID),
+                    'game': game.game_type.game_name.upper(),
+                    'game_description': game.game_type.game_description,
+                    'NPC': 'starter',
+                    'rounds':'1',
+                    'random_seed':'False',
+                    'game_define':'False',
+                    'status':(json.loads(game.status))['status'],
+                    'players': [
+                        {
+                            'account' : player.username,
+                            'assignedPort': (json.loads(game.server_response))['ports']['player{}_port'.format(cnt)]
+                        }
+                        for cnt,player in enumerate(game.players.all())
+                    ]                
+                },
+                'current_status': check_game
+            },status = 200)
         # RETURN-EXAMPLE
         # {
         #     "game_info": {
