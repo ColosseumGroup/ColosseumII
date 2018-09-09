@@ -1,14 +1,15 @@
 <template>
   <Row type="flex" :gutter="18">    
-    <Col :span=19>
+    <!-- <Col :span=19> -->
+    <Col>
     <Panel shadow>
-      <div slot="title">Game Rooms</div>
+      <div slot="title">Ongoing Games</div>
       <div slot="extra">
         <ul class="filter">
           <li>
             <span><b>Select Port:</b></span>
             <Dropdown @on-click="selectPort">
-              <span>{{query.port === '' ? '0' : query.port}}
+              <span>{{query.port}}
                 <Icon type="md-arrow-dropdown"></Icon>
               </span>
               <Dropdown-menu slot="list">
@@ -23,7 +24,7 @@
             <span><b>Select Game Type:</b></span>            
             <!-- <Dropdown @on-click="filterByDifficulty"> -->
             <Dropdown @on-click="selectGameType">
-              <span>{{query.gameType === '' ? 'dealer_renju' : query.gameType}}
+              <span>{{query.gameType}}
                 <Icon type="md-arrow-dropdown"></Icon>
               </span>
               <Dropdown-menu slot="list">
@@ -61,12 +62,12 @@
              ></Table>
              <!-- :loading="loadings.table" -->
              
-    </Panel>
-    <Pagination :total="total" :page-size="limit" @on-change="pushRouter" :current.sync="query.page"></Pagination>
-    </Col>
-    <Col :span="5">
-    <Panel :padding="10">
-      <div slot="title" class="taglist-title">Tags</div>
+    </Panel>  
+    <!-- <Pagination :total="total" :page-size="limit" @on-change="pushRouter" :current.sync="query.page"></Pagination> -->
+    <!-- </Col> -->
+    <!-- <Col :span="5"> -->
+    <!-- <Panel :padding="10">
+      <div slot="title" class="taglist-title">Tags</div> -->
       <!-- <Button v-for="tag in tagList"
               :key="tag.name"
               @click="filterByTag(tag.name)"
@@ -79,7 +80,7 @@
         <Icon type="shuffle"></Icon>
         Pick one
       </Button> -->
-    </Panel>
+    <!-- </Panel> -->
     <!-- <Spin v-if="loadings.tag" fix size="large"></Spin> -->
     </Col>
   </Row>
@@ -135,7 +136,10 @@
                 on: {
                   click: () => {
                     // console.log("hi")
-                    this.$router.push({name: 'problem-details', params: {problemID:params.row._id}})
+                    console.log(params)
+                    // console.log(this.problemList[params.index]['game_ID'])
+                    this.$router.push({name: 'problem-details', params: {gameID:this.problemList[params.index]['game_ID']}})
+                    // this.$router.push({name: 'problem-details', params: {problemID:params.index}})
                   }
                 }
               },'More')
@@ -209,19 +213,18 @@
         //   }
         // ],
         problemList: [
-          {
-            game_ID: 1,
-            game_type: 'dealer_renju',
-            players: '1/2'
-          },
-          {
-            game_ID: 2,
-            game_type: 'dealer_renju',
-            players: '2/2'
-          },
-
+          // {
+          //   game_ID: 1,
+          //   game_type: 'dealer_renju',
+          //   players: '1/2'
+          // },
+          // {
+          //   game_ID: 2,
+          //   game_type: 'dealer_renju',
+          //   players: '2/2'
+          // },
         ],
-        limit: 20,
+        limit: 10,
         total: 0,
         loadings: {
           table: true,
@@ -230,8 +233,8 @@
         routeName: '',
         query: {
           keyword: '',
-          port: '',
-          gameType: '',
+          port: '0',
+          gameType: 'dealer_renju',
           tag: '',
           page: 1
         }
@@ -242,9 +245,11 @@
     },
     methods: {
       init (simulate = false) { 
-        console.log("init")
-        let tmpdata = api.getProblemList()
-        console.log(tmpdata)
+        this.problemList=[]
+        this.getProblemList()
+        // console.log("tmpdata.data"+tmpdata.data)
+        // this.problemList.push(tmpdata[0])
+        // console.log(tmpdata)
         this.routeName = this.$route.name
         let query = this.$route.query
         this.query.difficulty = query.difficulty || ''
@@ -258,7 +263,7 @@
           // this.getTagList()
         // }
         
-        this.getProblemList()
+        // this.getProblemList()
       },
       pushRouter () {
         this.$router.push({
@@ -267,17 +272,39 @@
         })
       },
       getProblemList () {
-        let offset = (this.query.page - 1) * this.limit
+        console.log("getproblemlistagain!")
+        this.problemList=[]
         this.loadings.table = true
-        console.log(api.getProblemList())
-        api.getProblemList(offset, this.limit, this.query).then(res => {
-          this.loadings.table = false
-          this.total = res.data.data.total
+        let offset = (this.query.page - 1) * this.limit          
+        
+        // api.getProblemList().then(res=>{
+        //   for(var arr in res.data){
+        //     console.log(res.data[arr]['players'])
+        //     var length = 0;
+        //     for(var key in res.data[arr]['players'])
+        //       length++
+        //     res.data[arr].players= length
+        //     this.problemList.push(res.data[arr])
+        //   }          
+        // })
+        this.total = 0;        
+        api.getProblemList().then(res => {
+          for(var key in res.data[arr])
+            this.total++
+          for(var arr in res.data){
+            console.log(res.data[arr]['players'])
+            var length = 0;
+            for(var key in res.data[arr]['players'])
+              length++
+            res.data[arr].players= length
+            this.problemList.push(res.data[arr])
+          }   
+        this.loadings.table = false
           // this.problemList = res.data.data.results
-          this.problemList = res.data
-          if (this.isAuthenticated) {
-            this.addStatusColumn(this.problemTableColumns, res.data.data.results)
-          }
+          // this.problemList = res.data
+          // if (this.isAuthenticated) {
+          //   this.addStatusColumn(this.problemTableColumns, res.data.data.results)
+          // }
         }, res => {
           this.loadings.table = false
         })
@@ -334,8 +361,10 @@
         }
       },
       createGame () {
-        api.createNewGame(1,1)
-        // this.$router.push({name: 'problem-list'})
+        let username = this.$store.state.user.profile.username
+        api.createNewGame(username,this.query.port,this.query.gameType)
+        this.getProblemList();
+        this.$router.push({name: 'problem-list'})
       },
       pickone () {
         api.pickone().then(res => {
@@ -345,7 +374,8 @@
       }
     },
     computed: {
-      ...mapGetters(['isAuthenticated'])
+      ...mapGetters(['website', 'modalStatus', 'user', 'isAuthenticated', 'isAdminRole']),
+      // 跟随路由变化
     },
     watch: {
       '$route' (newVal, oldVal) {

@@ -5,7 +5,7 @@ import { STORAGE_KEY, USER_TYPE, PROBLEM_PERMISSION } from '@/utils/constants'
 
 const state = {
   profile: {
-    user:{}
+    // user:{}
   }
 }
 

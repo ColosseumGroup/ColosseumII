@@ -29,12 +29,11 @@ export default {
       }                                                                                    
     })
   },
-  createNewGame(port,gameType){
+  createNewGame(username,port,gameType){
     return axios({
-      method: 'get',
-      url:'game/list/',
-      // url:'/game/create/'+gameType+'/',
-      data:{port:port},
+      method: 'post',
+      url:'/game/create/'+gameType+'/',
+      data:{port:port,username:username},
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'

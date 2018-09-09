@@ -111,13 +111,14 @@ def RegisterAPI(req):  #valid
 
 @csrf_exempt
 # @login_required
-def CreateNewGameRoomAPI(req,GameTypeID): # VALID
+def CreateNewGameRoomAPI(req,GameTypeName): # VALID
     if req.method == 'POST':
         dict_req = eval(req.body)
         user_port = dict_req['port']
-        game_type = GameType.objects.get(pk = GameTypeID)
+        username = dict_req['username']
+        game_type = GameType.objects.get(game_name = GameTypeName)
         new_game = Game(game_type = game_type)
-        player = req.user
+        player = User.objects.get(username = username)
         new_game.save() 
         join = JoinGame(player = player, game = new_game)
         join.save()

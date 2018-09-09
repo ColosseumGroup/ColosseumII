@@ -51,8 +51,45 @@
         </div>
       </Panel>
       <!--problem main end-->
-      <Card :padding="20" id="submit-code" >
+      <!-- <Card :padding="20" id="submit-code" > -->
+      <Card id="submit-code" >
         <!-- <div slot="title">Curent Players</div> -->
+        <ul class="filter">
+          <li>
+            <span><b>Select Port: </b></span>
+            <Dropdown>
+              <!-- <span>{{query.port}} -->
+              <span>abc
+                <Icon type="md-arrow-dropdown"></Icon>
+              </span>
+              <Dropdown-menu slot="list">
+                <Dropdown-item name="0">0</Dropdown-item>
+                <Dropdown-item name="1">1</Dropdown-item>
+                <Dropdown-item name="2">2</Dropdown-item>
+                <Dropdown-item name="3">3</Dropdown-item>
+              </Dropdown-menu>
+            </Dropdown>
+          </li>
+          <li>
+            <span><b>Select Game Type:</b></span>            
+            <!-- <Dropdown @on-click="filterByDifficulty"> -->
+            <Dropdown>
+              <!-- <span>{{query.gameType}} -->
+              <span>
+                <Icon type="md-arrow-dropdown"></Icon>
+              </span>
+              <Dropdown-menu slot="list">
+                <Dropdown-item name="dealer_renju">dealer_renju</Dropdown-item>
+                <Dropdown-item name="dealer_poker">dealer_poker</Dropdown-item>
+              </Dropdown-menu>
+            </Dropdown>
+          </li>
+          <li>
+            <Button type="info" @click="createGame">
+              <Icon type="md-add"></Icon>
+              Join Game
+            </Button>
+          </li>        </ul>
         <Table style="width:100%" :columns="playerColumns" :data="playerData"></Table>
       </Card>        
         <!-- <CodeMirror :value.sync="code" @changeLang="onChangeLang" :languages="problem.languages"
@@ -246,7 +283,7 @@
         captchaCode: '',
         captchaSrc: '',
         contestID: '',
-        problemID: '',
+        gameID: '',
         submitting: false,
         code: '',
         language: 'C++',
@@ -276,7 +313,7 @@
       }
     },
     beforeRouteEnter (to, from, next) {
-      let problemCode = storage.get(buildProblemCodeKey(to.params.problemID, to.params.contestID))
+      let problemCode = storage.get(buildProblemCodeKey(to.params.gameID, to.params.contestID))
       if (problemCode) {
         next(vm => {
           vm.language = problemCode.language
@@ -295,9 +332,10 @@
       init () {
         this.$Loading.start()
         this.contestID = this.$route.params.contestID
-        this.problemID = this.$route.params.problemID
+        this.gameID = this.$route.params.game_ID
+        console.log(gameID)
         let func = this.$route.name === 'problem-details' ? 'getProblem' : 'getContestProblem'
-        api[func](this.problemID, this.contestID).then(res => {
+        api[func](this.gameID, this.contestID).then(res => {
           this.$Loading.finish()
           this.$nextTick(() => {
             if (window.MathJax) {
@@ -483,9 +521,9 @@
       },
       submissionRoute () {
         if (this.contestID) {
-          return {name: 'contest-submission-list', query: {problemID: this.problemID}}
+          return {name: 'contest-submission-list', query: {gameID: this.gameID}}
         } else {
-          return {name: 'submission-list', query: {problemID: this.problemID}}
+          return {name: 'submission-list', query: {gameID: this.gameID}}
         }
       }
     },
@@ -509,6 +547,13 @@
 </script>
 
 <style lang="less" scoped>
+  @import (reference) '../../../../styles/common.less';
+  ul.filter {
+    > li {
+      display: inline-block;
+      padding: 0 10px;
+    }
+  }
   .card-title {
     margin-left: 8px;
   }

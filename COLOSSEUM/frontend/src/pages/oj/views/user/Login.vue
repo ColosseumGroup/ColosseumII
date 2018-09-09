@@ -42,8 +42,8 @@
     data () {
       return {
         formLogin:{
-          username : 'abc',
-          password : 'abcabc',
+          username : 'trial1',
+          password : 'trial1',
         }
       }
       // const CheckRequiredTFA = (rule, value, callback) => {

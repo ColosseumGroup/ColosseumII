@@ -53,7 +53,7 @@ export default [
   },
   {
     name: 'problem-details',
-    path: '/problem/:problemID',
+    path: '/problem/:gameID',
     meta: {title: 'Problem Details'},
     component: Problem
   },
