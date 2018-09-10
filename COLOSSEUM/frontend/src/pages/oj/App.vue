@@ -1,6 +1,8 @@
 <template>
   <div>
+    <div>
     <NavBar></NavBar>
+    </div>
     <div class="content-app">
       <transition name="fadeInUp" mode="out-in">
         <router-view></router-view>

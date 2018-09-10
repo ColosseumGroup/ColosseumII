@@ -1,46 +1,46 @@
 <template>
-  <div id="header">
-    <Menu theme="light" mode="horizontal" @on-select="handleRoute" :active-name="activeMenu" class="oj-menu">
+  <div id="navheader">
+    <Menu mode="horizontal" @on-select="handleRoute" active-name="activeMenu" class="oj-menu">
       <div class="logo"><span>{{website.website_name}}</span></div>
-      <Menu-item name="/">
+      <MenuItem name="/">
         <Icon type="ios-home-outline"></Icon>
         Home
-      </Menu-item>
-      <Menu-item name="/problems">
+      </MenuItem>
+      <MenuItem name="/problems">
         <Icon type="ios-keypad-outline"></Icon>
         Games
-      </Menu-item>
-      <Menu-item name="/contests">
+      </MenuItem>
+      <MenuItem name="/contests">
         <Icon type="ios-trophy-outline"></Icon>
         Contests
-      </Menu-item>
-      <!-- <Menu-item name="/status">
+      </MenuItem>
+      <!-- <MenuItem name="/status">
         <Icon type="ios-pulse-strong"></Icon>
         Status
-      </Menu-item> -->
+      </MenuItem> -->
       <Submenu name="3">
         <template slot="title">
           <Icon type="ios-podium-outline"></Icon>
           Rank
         </template>
-        <Menu-item name="acm-rank">
+        <MenuItem name="acm-rank">
           ACM Rank
-        </Menu-item>
-        <Menu-item name="oi-rank">
+        </MenuItem>
+        <MenuItem name="oi-rank">
           OI Rank
-        </Menu-item>
+        </MenuItem>
       </Submenu>
       <!-- <Submenu name="">
         <template slot="title">
           <Icon type="information-circled"></Icon>
           About
         </template>
-        <Menu-item name="/about">
+        <MenuItem name="/about">
           Judger
-        </Menu-item>
-        <Menu-item name="/FAQ">
+        </MenuItem>
+        <MenuItem name="/FAQ">
           FAQ
-        </Menu-item>
+        </MenuItem>
       </Submenu> -->
       <template v-if="!isAuthenticated">
         <div class="btn-menu">
@@ -62,18 +62,18 @@
       <template v-else>
         <Dropdown class="drop-menu" placement="bottom-end" trigger="click">
         <!-- <Dropdown> -->
-          <a type="text" class="drop-menu-title">{{ 'Welcome,'+ user.firstName + ' ' + user.lastName}}
+          <a href="javascript:void(0)" class="drop-menu-title">{{ 'Welcome,'+ user.firstName + ' ' + user.lastName}}
             <Icon type="ios-arrow-down"></Icon>
           </a>
-          <Dropdown-menu slot="list">
-            <Dropdown-item>Submissions</Dropdown-item>
-            <Dropdown-item>Settings</Dropdown-item>
-            <!-- <Dropdown-item name="/user-home">Home</Dropdown-item>
-            <Dropdown-item name="/status?myself=1">Submissions</Dropdown-item>
-            <Dropdown-item name="/setting/profile">Settings</Dropdown-item>
-            <Dropdown-item v-if="isAdminRole" name="/admin">Management</Dropdown-item>
-            <Dropdown-item divided name="/logout">Logout</Dropdown-item> -->
-          </Dropdown-menu>
+          <DropdownMenu slot="list">
+            <DropdownItem>Submissions</DropdownItem>
+            <DropdownItem>Settings</DropdownItem>
+            <!-- <DropdownItem name="/user-home">Home</DropdownItem>
+            <DropdownItem name="/status?myself=1">Submissions</DropdownItem>
+            <DropdownItem name="/setting/profile">Settings</DropdownItem>
+            <DropdownItem v-if="isAdminRole" name="/admin">Management</DropdownItem>
+            <DropdownItem divided name="/logout">Logout</DropdownItem> -->
+          </DropdownMenu>
         </Dropdown>
       </template>
     </Menu>
@@ -132,9 +132,9 @@
   }
 </script>
 <style lang="less" scoped>
-  #header {
+  #navheader {
     position: fixed;
-    overflow: hidden;
+    // overflow: hidden; 
     top: 0;
     left: 0;
     height: 60px;
@@ -158,7 +158,7 @@
       float: right;
       margin-right: 40px;
       &-title {
-        font-size: 18px;
+        font-size: 16px;
       }
     }
     .btn-menu {

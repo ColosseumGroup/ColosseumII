@@ -140,6 +140,11 @@
             align:'center'            
           },
           {
+            title:'Created Time',
+            key:'created_time',
+            align:'centers'
+          },
+          {
             title:'Further Information',
             align:'center',
             render: (h, params) => {
@@ -178,6 +183,11 @@
             key:'players',
             align:'center'            
           },
+          {
+            title:'Created Time',
+            key:'created_time',
+            align:'centers'
+          },       
           {
             title:'Further Information',
             align:'center',
@@ -288,20 +298,22 @@
       init (simulate = false) { 
         this.gameList=[]
         this.oldGameList=[]
-        this.getGameList(0)
-        this.getGameList(1)
+        this.getGameList('0')
+        this.getGameList('1')
         // console.log("tmpdata.data"+tmpdata.data)
         // this.gameList.push(tmpdata[0])
         // console.log(tmpdata)
         this.routeName = this.$route.name
-        let query = this.$route.query
-        this.query.difficulty = query.difficulty || ''
-        this.query.keyword = query.keyword || ''
-        this.query.tag = query.tag || ''
-        this.query.page = parseInt(query.page) || 1
-        if (this.query.page < 1) {
-          this.query.page = 1
-        }
+        this.query.port = '0'
+        this.query.gameType = 'dealer_renju'
+        // let query = this.$route.query
+        // this.query.difficulty = query.difficulty || ''
+        // this.query.keyword = query.keyword || ''
+        // this.query.tag = query.tag || ''
+        // this.query.page = parseInt(query.page) || 1
+        // if (this.query.page < 1) {
+        //   this.query.page = 1
+        // }
         // if (!simulate) {
           // this.getTagList()
         // }
@@ -339,7 +351,7 @@
             var length = 0;
             for(var key in res.data[arr]['players'])
               length++
-            res.data[arr].players= length
+            res.data[arr].players= length+'/'+res.data[arr]['max_player_num']
             if(status==0)
               this.gameList.push(res.data[arr])
             else
@@ -409,7 +421,8 @@
       createGame () {
         let username = this.$store.state.user.profile.username
         api.createNewGame(username,this.query.port,this.query.gameType)
-        this.getGameList();
+        this.getGameList('0');
+        this.getGameList('1');
         this.$router.push({name: 'problem-list'})
       },
       pickone () {

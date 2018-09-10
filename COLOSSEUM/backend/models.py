@@ -16,6 +16,7 @@ class GameType(models.Model):
     #  game_description = "game_test_1_description"
     game_name = models.CharField(max_length = 32)
     game_description = models.TextField()
+    max_player_num = models.IntegerField(default = 2)    
     def __str__(self):
         return self.game_name
 
@@ -36,7 +37,6 @@ class Game(models.Model):
     game_type = models.ForeignKey(GameType,on_delete = models.CASCADE)
     status = models.CharField(max_length=1, choices = STATUS, default = '0')
     created_time = models.DateTimeField(auto_now_add = True)
-    max_player_num = models.IntegerField(default = 2)
     players = models.ManyToManyField(User, through='JoinGame')
     server_response = models.TextField(default = '')
     game_result = models.TextField(default = '')

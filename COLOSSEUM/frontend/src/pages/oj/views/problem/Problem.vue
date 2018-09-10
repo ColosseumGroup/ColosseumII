@@ -74,13 +74,20 @@
             </Dropdown>
           </li>
           <li>
-            <Button type="info" @click="joinGame">
+            <Button type="info" @click="joinGame" v-if="gamePending">
               Join Game
               <Icon type="md-arrow-dropright"></Icon>              
             </Button>
           </li>        </ul>
         <Table style="width:100%" :columns="playerColumns" :data="playerData"></Table>
-      </Card>        
+      </Card>     
+      <Card id="game-record">
+        <div slot="title">
+          <b>Game Record</b></div>       
+        <Card> 
+          <p>{{gameInfo.game_records}}</p>
+        </Card>
+      </Card>   
         <!-- <CodeMirror :value.sync="code" @changeLang="onChangeLang" :languages="problem.languages"
                     :language="language"></CodeMirror>
         <Row type="flex" justify="space-between">
@@ -175,7 +182,12 @@
             </li>
           <li>
             <p>Created By</p>
-            <p>{{gameInfo.players['0'].account}}</p></li>
+            <p>{{gameInfo.players['0'].account}}</p>
+          </li>
+          <li>
+            <p>Created Time</p>
+            <p>{{gameInfo.created_time}}</p>
+          </li>          
           <li v-if="problem.difficulty">
             <p>Level</p>
             <p>{{problem.difficulty}}</p></li>
@@ -183,6 +195,24 @@
             <p>Score</p>
             <p>{{problem.total_score}}</p>
           </li>
+          <!-- <li> -->
+            <Button 
+                  type="error" ghost
+                  @click="deleteWarning=true" >
+              Delete Game
+            </Button>
+            <Modal
+              v-model="deleteWarning"
+              title="WARNING"
+              @on-ok="deleteGame"
+              @on-cancel="cancel"
+              >
+              <p>
+                Are you sure to delete this game?
+                This operation cannot be undone!
+              </p>
+            </Modal>
+          <!-- </li> -->
           <!-- <li>
             <p>Tags</p>
             <p>
@@ -209,14 +239,14 @@
       </Card>  -->
     </div>
 
-    <Modal v-model="graphVisible">
+    <!-- <Modal v-model="graphVisible">
       <div id="pieChart-detail">
         <ECharts :options="largePie" :initOptions="largePieInitOpts"></ECharts>
       </div>
       <div slot="footer">
         <Button type="ghost" @click="graphVisible=false">Close</Button>
       </div>
-    </Modal>
+    </Modal> -->
   </div>
 </template>
 
@@ -241,6 +271,8 @@
     mixins: [FormMixin],
     data () {
       return {
+        gamePending: true,
+        deleteWarning:false,
         gameInfo:[],
         currentStatus:[],
         playerColumns:[
@@ -359,23 +391,57 @@
           this.$Loading.error()
         })
       },
+      cancel(){
+        // this.$Message.info('Clicked cancel')
+      },
+      // instance(type){
+      //   this.$Modal.warning({
+      //     title:type,
+      //     content:'<p>Are you sure you want to delete this game?</p>'
+      //   })
+      // },
+      deleteGame(){
+        console.log("delete")
+        let username = this.$store.state.user.profile.username        
+        api.deleteGame(this.gameID,username).then(res=>{
+          this.$router.push({name:'problem-list'})
+        })
+      },
       selectPort(port){
         this.joinQuery.port = port
       },
       getGameInfo(gameID){
+        this.currentStatus = []
+        this.gameInfo=[]
+        this.playerData=[]
+        console.log(gameID)
         api.getGameInfo(gameID).then(res=>{
           console.log(res.data)
           this.currentStatus = res.data.current_status
           this.gameInfo = res.data.game_info
           this.playerData = this.gameInfo['players']
-          console.log(this.playerData)
+          console.log("gameinfo"+this.playerData)
+          if(this.gameInfo.max_player_num == this.playerData.length) 
+            this.gamePending=false
+          console.log(this.gamePending)
         })
       },
       joinGame () {
         let username = this.$store.state.user.profile.username
         api.joinGame(username,this.joinQuery.port,this.gameID)
-        // this.$router.push({name: 'problem'})
-        // this.init()
+        console.log("get game info again")
+        api.getGameInfo(this.gameID).then(res=>{
+          console.log(res.data)
+          this.currentStatus = res.data.current_status
+          this.gameInfo = res.data.game_info
+          this.playerData = this.gameInfo['players']
+          console.log("gameinfo"+this.playerData)
+          if(this.gameInfo.max_player_num == this.playerData.length) 
+            this.gamePending=false
+          console.log(this.gamePending)
+        })
+                // setTimeout(this.getGameInfo(this.gameID),1000)
+        // this.$router.push({name: 'problem-details', params: {gameID:this.gameID}})
       },      
       changePie (problemData) {
         // 只显示特定的一些状态

@@ -8,5 +8,6 @@ urlpatterns = [
     path('game/create/<str:GameTypeName>/',views.CreateNewGameRoomAPI),
     path('game/list/<int:status>/',views.GetGameRoomListAPI),
     path('game/<int:GameID>/', views.GameInfoAPI),
+    path('game/<int:GameID>/kill/', views.EndGameAPI),
     path('game/<int:GameID>/record/', views.GameStepsAPI),
 ]

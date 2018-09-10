@@ -44,34 +44,18 @@
         formLogin:{
           username : 'trial1',
           password : 'trial1',
+        },
+        btnLoginLoading: false,
+        ruleLogin: {
+          username: [
+            {required: true, trigger: 'blur'},
+            // {validator: CheckRequiredTFA, trigger: 'blur'}
+          ],
+          password: [
+            {required: true, trigger: 'change', min: 0, max: 30}
+          ]
         }
       }
-      // const CheckRequiredTFA = (rule, value, callback) => {
-      //   if (value !== '') {
-      //     api.tfaRequiredCheck(value).then(res => {
-      //       this.tfaRequired = res.data.data.result
-      //     })
-      //   }
-      //   callback()
-      // }
-      // return {
-      //   tfaRequired: false,
-      //   btnLoginLoading: false,
-      //   formLogin: {
-      //     username: '',
-      //     password: '',
-      //     // tfa_code: ''
-      //   },
-      //   ruleLogin: {
-      //     username: [
-      //       {required: true, trigger: 'blur'},
-      //       // {validator: CheckRequiredTFA, trigger: 'blur'}
-      //     ],
-      //     password: [
-      //       {required: true, trigger: 'change', min: 0, max: 30}
-      //     ]
-      //   }
-      // }
     },
     methods: {
       ...mapActions(['changeModalStatus', 'getProfile']),

@@ -49,10 +49,10 @@
       }
     },
     mounted () {
-      let params = {status: CONTEST_STATUS.NOT_START}
-      api.getContestList(0, 5, params).then(res => {
-        this.contests = res.data.data.results
-      })
+      // let params = {status: CONTEST_STATUS.NOT_START}
+      // api.getContestList(0, 5, params).then(res => {
+      //   this.contests = res.data.data.results
+      // })
     },
     methods: {
       getDuration (startTime, endTime) {

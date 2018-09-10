@@ -136,6 +136,8 @@ def GetGameRoomListAPI(req,status):
             data['room_{}'.format(i)]={
                 'game_ID':str(game.id),
                 'game_type':game.game_type.game_name,
+                'created_time':game.created_time,
+                'max_player_num':game.game_type.max_player_num,
                 'players': {           
                         'name_{}'.format(cnt+1) : player.username for cnt,player in enumerate(game.players.all())  
                     }                
@@ -167,6 +169,7 @@ def GameInfoAPI(req,GameID):
         dict_param = {
             'gameID': str(GameID),
             'game': game.game_type.game_name,
+            'created_time':game.created_time,
             'NPC': 'starter',  # 'False' 'starter' 'master' 'Godlike'
             'rounds': '100',
             'random_seed': '0',  # 'False' 'int'
@@ -188,7 +191,6 @@ def GameInfoAPI(req,GameID):
                 for cnt,player in enumerate(players)
             ]           
         }
-        
         # DEV-NOTES:
         # the requests.post showed many an exception in this case
         # it first claimed that 
@@ -205,7 +207,8 @@ def GameInfoAPI(req,GameID):
             # if the number of users in the room satisfy the requirements, change 
             # game.status and create game, sending the game information to the game 
             # server, and offering the returned ports to user
-            if game.players.all().count() == game.max_player_num: 
+            # print("all players:"+str(game.players.all().count()))
+            if game.players.all().count() == game.game_type.max_player_num: 
                 players = game.players.all()
                 """
                 dict_param = {
@@ -245,13 +248,20 @@ def GameInfoAPI(req,GameID):
                         {'name_{}'.format(cnt+1) : player.username}
                         for cnt,player in enumerate(players)
                     ]
-                }                
+                }              
+                if game.game_type.game_name == "dealer_renju":
+                    dict_param['game_define'] = 'False'  
+                    dict_param['keep_transaction'] = 'False'
+                print(dict_param)
                 server_response = InteractWithGameServer(dict_param=dict_param, append_url='/api/play',req='POST')
-                # further deal with 
+                # further deals with 
+                print(server_response)
                 game.server_response = json.dumps(server_response)
                 if server_response['status'] == "ongoing":
+                    print("status is ongoing"+str(server_response))
                     game.status = '1'
-                game.save()
+                    game.save()
+                    print(game.status)
                 return HttpResponse(json.dumps(dict_param)+game.server_response,status = 200)  
         return HttpResponse(game.server_response,status = 403)
     # GET - get game info & status
@@ -265,13 +275,14 @@ def GameInfoAPI(req,GameID):
             'gameID':str(GameID),
             'action': 'status'
         }
-        game.game_status = InteractWithGameServer(dict_param=game_info,append_url='/api/kill',req='POST')
-        print(game.game_status)
         if game.status == '0':
             return JsonResponse({
                 'game_info': {
                     'gameID': str(GameID),
                     'game': game.game_type.game_name.upper(),
+                    'game_records':game.game_records,
+                    'max_player_num': game.game_type.max_player_num,
+                    'created_time':game.created_time,
                     'game_description': game.game_type.game_description,
                     'status':'pending',
                     'players': [
@@ -283,20 +294,30 @@ def GameInfoAPI(req,GameID):
                     ]                
                 },
                 'current_status': 'pending'
-            },status = 200)
+            },status = 201)
         else:
+            check = InteractWithGameServer(dict_param=game_info,append_url='/api/kill',req='POST')  
             game.save()
+            game_check ={
+                'gameID':str(GameID),
+                'game': game.game_type.game_name
+            }
+            game.records= InteractWithGameServer(dict_param=game_check,append_url='/api/record',req='POST')
             print(json.loads(game.server_response))
+            # print(game.records)
             return JsonResponse({
                 'game_info': {
                     'gameID': str(GameID),
                     'game': game.game_type.game_name.upper(),
+                    'game_records':game.game_records,                    
                     'game_description': game.game_type.game_description,
+                    'max_player_num': game.game_type.max_player_num,                    
+                    'created_time':game.created_time,            
                     'NPC': 'starter',
                     'rounds':'1',
                     'random_seed':'False',
                     'game_define':'False',
-                    'status':(json.loads(game.status))['status'],
+                    'status': game.status,
                     'players': [
                         {
                             'account' : player.username,
@@ -305,7 +326,7 @@ def GameInfoAPI(req,GameID):
                         for cnt,player in enumerate(game.players.all())
                     ]                
                 },
-                'current_status': check_game
+                'current_status': check
             },status = 200)
         # RETURN-EXAMPLE
         # {
@@ -334,7 +355,32 @@ def GameInfoAPI(req,GameID):
         #     }
         # }
     
-# @csrf_exempt
+@csrf_exempt
+def EndGameAPI(req,GameID):
+    if req.method == 'POST':
+        try:
+            game = Game.objects.get(pk=GameID)            
+            username=eval(req.body)['username']      
+            print(game.players.all()[0].username)
+            if username!=game.players.all()[0].username:
+                return HttpResponse("UNAUTHORIZED",status=401) 
+            game.delete()
+            try:
+                game_info = {
+                    'gameID':str(GameID),
+                    'action': 'terminate'
+                }
+                # print("body:"+eval(req.body)['username'])
+                check = InteractWithGameServer(dict_param=game_info,append_url='/api/kill',req='POST')  
+            except:
+                return HttpResponse("GameNotFoundOnServer",status=200)
+            return HttpResponse("OK",status=200)            
+        except:
+            return HttpResponse("GameNotFound",status=404)
+                    
+    
+
+@csrf_exempt
 def GameStepsAPI(req,GameID):
     pass
 #     game = Game.objects.get(pk = GameID)

@@ -51,6 +51,17 @@ export default {
       }       
     })
   },
+  deleteGame(gameID,username){
+    return axios({
+      method: 'post',
+      url:'game/'+gameID+'/kill/',
+      data:{username:username},
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }             
+    })
+  },
   checkUsernameOrEmail (username, email) {
     // return ajax('check_username_or_email', 'post', {
     //   data: {
@@ -159,7 +170,7 @@ export default {
       method: 'get',
       url:'game/list/'+status+'/',
       headers: {
-        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
       }                                                                                    
     })
